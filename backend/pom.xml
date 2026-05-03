@@ -8,11 +8,11 @@
 		<version>3.5.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.brentcodes</groupId>
-	<artifactId>librarysystem</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>springboot</name>
-	<description>Demo Project for Spring Boot</description>
+	<groupId>io.clamped</groupId>
+	<artifactId>clamped-cloud</artifactId>
+	<version>0.1.0-SNAPSHOT</version>
+	<name>clamped-cloud</name>
+	<description>Clamped Cloud — team issue tracking and error monitoring</description>
 	<url/>
 	<licenses>
 		<license/>
