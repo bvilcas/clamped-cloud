@@ -4,9 +4,6 @@ Issue tracking for student teams. Clamped aggregates, assigns, and triages progr
 issues through a fixed ticket lifecycle, and guarantees that every fix is confirmed by
 somebody other than the person who wrote it.
 
-Part of the [Clamped](https://github.com/bvilcas) monorepo alongside **clamped-local**
-(self-hosted SDK + server).
-
 ---
 
 ## Who it is for
@@ -102,6 +99,11 @@ become one event group that says 300, not three hundred tickets nobody reads. A 
 worth fixing gets promoted into an issue, carrying its app, host, and payload with it, and
 from there it follows the same lifecycle as anything filed by hand.
 
+This half of the product is where [clamped-local](https://github.com/bvilcas/clamped-local/tree/main)
+came from. Catching an exception and shipping it somewhere useful turned out to be a
+problem worth solving on its own, so it grew into a self-hosted SDK and server that a
+team can run without an account anywhere.
+
 ---
 
 ## Roles and permissions
@@ -119,38 +121,6 @@ from there it follows the same lifecycle as anything filed by hand.
 
 Two project roles, `LEAD` and `MEMBER`, and that is the whole permission model. Whoever
 creates a project is its lead.
-
----
-
-## Where this is heading
-
-Clamped started as a general error-monitoring and security-tracking platform, and it grew
-the surface area that comes with that: a CVE lookup, a vulnerability view, project
-messaging, notifications, and a calendar. The direction now is narrower.
-
-**Refocusing on student teams.** The audience is a capstone or hackathon team, not a
-security organisation. Features that only pay off at company scale move out of the main
-path, and the language moves with them: tickets and projects rather than vulnerabilities
-and fleets.
-
-**The two-person rule moves to the front.** It is the reason to choose Clamped over a
-spreadsheet or a Trello board, and it currently sits behind screens that never mention it.
-The redesigned issue page states the rule in context and shows the workflow as a five-step
-progress trail rather than a status dropdown.
-
-**Fewer screens, denser screens.** Twenty-three views is more than this product needs. The
-core experience is five: a landing page, a dashboard, the issue list, the issue detail,
-and the report form. Each is meant to fit a laptop screen without scrolling, because the
-current layout buries a short list under a long one.
-
-**Interface first.** Those five screens were rebuilt in plain HTML and CSS before any of
-it becomes Vue, so the layout, density, and wording could be settled without fighting a
-component library. The Vue views follow that prototype rather than the other way round,
-and Vuetify comes out with them. The prototype and its notes live in **clamped-redesign**.
-
-**Calendar and messaging stay, quietly.** Deadlines and changing requirements are real
-problems for a team that meets twice a week. Both remain, as support for the ticket flow
-rather than destinations of their own.
 
 ---
 
