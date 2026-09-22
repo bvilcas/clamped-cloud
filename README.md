@@ -60,49 +60,33 @@ Three roles attach to an issue, separate from project roles:
 
 ## What a ticket holds
 
-Title, description, type (`SECURITY`, `RELIABILITY`, `PERFORMANCE`, `UX`, `OTHER`),
-severity (`LOW` through `CRITICAL`), status, due date, and the repository and commit the
-fix landed in.
-
-A ticket also carries optional event fields, meaning app, host, event type, and a JSON
-payload. These are filled in automatically when a ticket is promoted from a captured
-error, and left blank when somebody files one by hand.
-
----
-
-## Errors become tickets
-
-Running applications push events to the cloud with a project API key:
+Title, description, type, severity (`LOW` through `CRITICAL`), status, due date, and the
+repository and commit the fix landed in. A ticket belongs to exactly one project.
 
 ```
-POST /api/v1/events/ingest
-X-Api-Key: <project-api-key>
-Content-Type: application/json
+title:        Login button unresponsive on mobile Safari
+projectName:  cs3744-capstone
+description:  Submit button does nothing on tap; works on desktop. Repro on iOS 18.
+severity:     MEDIUM
+status:       REPORTED
 
-{
-  "message": "NullPointerException in PaymentService",
-  "source": "BACKEND",
-  "environment": "PRODUCTION",
-  "projectId": 1,
-  "severity": "HIGH",
-  "exceptionClass": "java.lang.NullPointerException",
-  "stacktrace": "...",
-  "sourceFile": "PaymentService.java",
-  "sourceLine": 42,
-  "sourceMethod": "processPayment"
-}
+- event info -   (optional, if the reporter wants to reference the stack trace)
+eventApp:     capstone-frontend
+eventHost:    dev-localhost
+eventType:    CLICK
+eventExtra:   {"component": "LoginButton", "browser": "Mobile Safari", "handlerFired": false}
 ```
 
-Events with the same fingerprint (SHA-256 of message, source, and environment) are
-deduplicated and counted rather than filed twice, so three hundred identical crashes
-become one event group that says 300, not three hundred tickets nobody reads. A group
-worth fixing gets promoted into an issue, carrying its app, host, and payload with it, and
-from there it follows the same lifecycle as anything filed by hand.
+The four event fields are optional and nothing fills them in for you. They are there for
+the case where somebody already has the crash in front of them, in a console or a log,
+and wants to paste the useful parts onto the ticket instead of describing them in prose.
+A ticket without them reads perfectly well; a ticket with them saves the next person from
+asking which browser, which host, and what the payload looked like.
 
-This half of the product is where [clamped-local](https://github.com/bvilcas/clamped-local/tree/main)
-came from. Catching an exception and shipping it somewhere useful turned out to be a
-problem worth solving on its own, so it grew into a self-hosted SDK and server that a
-team can run without an account anywhere.
+That small idea is where [clamped-local](https://github.com/bvilcas/clamped-local/tree/main)
+came from. Catching an exception and getting it somewhere useful turned out to be a
+problem worth solving properly, so it grew into a self-hosted SDK and server of its own
+rather than staying four text boxes on a form.
 
 ---
 
@@ -145,7 +129,7 @@ clamped-cloud/
 │       ├── backendconfig/          # Global exception handler, data initializer
 │       ├── calendar/               # Issue due-date calendar endpoint
 │       ├── contact/                # Contact form → admin email
-│       ├── event/                  # Event ingestion, grouping, deduplication
+│       ├── event/                  # Event groups behind a ticket
 │       ├── issue/                  # Issue CRUD, status transitions, reporting
 │       ├── jwtconfig/              # JWT service, security filter chain
 │       ├── message/                # Project messages

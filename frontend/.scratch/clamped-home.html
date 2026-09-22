@@ -1,0 +1,223 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Clamped Home Wireframe</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    color: #000;
+    margin: 0;
+    background: #fff;
+    width: 1400px;
+  }
+  .wf { border: 2px solid #000; }
+
+  /* Nav */
+  .navbar {
+    display: flex;
+    align-items: center;
+    padding: 14px 24px;
+    border-bottom: 2px solid #000;
+    gap: 24px;
+  }
+  .logo-box {
+    border: 1.5px solid #000;
+    padding: 6px 14px;
+    font-weight: bold;
+    font-size: 16px;
+  }
+  .navlinks { display: flex; gap: 20px; flex: 1; font-size: 13px; }
+  .navlinks span { display: flex; align-items: center; gap: 3px; }
+  .navlinks .caret { font-size: 9px; }
+  .nav-right { display: flex; align-items: center; gap: 14px; }
+  .btn {
+    border: 1.5px solid #000;
+    padding: 8px 18px;
+    font-size: 13px;
+    text-align: center;
+  }
+  .btn-fill { background: #000; color: #fff; border-radius: 20px; }
+  .icon-circle {
+    border: 1.5px solid #000;
+    border-radius: 50%;
+    width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+  }
+
+  /* Promo banner */
+  .banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px;
+    border-bottom: 1px solid #000;
+    font-size: 12px;
+    background: repeating-linear-gradient(45deg, #fff, #fff 8px, #f2f2f2 8px, #f2f2f2 16px);
+  }
+  .banner u { text-decoration: underline; }
+  .banner .x { border: 1px solid #000; border-radius: 50%; width: 16px; height: 16px; display:flex; align-items:center; justify-content:center; font-size:10px; }
+
+  /* Hero */
+  .hero {
+    display: flex;
+    padding: 60px 60px 20px;
+    gap: 60px;
+  }
+  .hero-left { flex: 1.3; }
+  .hero-headline { font-size: 44px; font-weight: bold; line-height: 1.1; margin-bottom: 18px; }
+  .hero-sub { font-size: 15px; color: #444; max-width: 460px; line-height: 1.5; }
+
+  .hero-right { flex: 1; }
+  .field-label { font-size: 12px; font-weight: bold; margin-bottom: 4px; }
+  .field {
+    border: 1.5px solid #000;
+    border-radius: 24px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 8px;
+  }
+  .field-hint { font-size: 10px; color: #666; margin-bottom: 16px; }
+  .btn-signup {
+    border: none;
+    background: #000;
+    color: #fff;
+    border-radius: 24px;
+    padding: 14px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 16px;
+  }
+  .divider { display: flex; align-items: center; gap: 10px; font-size: 11px; color: #666; margin-bottom: 16px; }
+  .divider .line { flex: 1; border-top: 1px solid #999; }
+  .btn-oauth {
+    border: 1.5px solid #000;
+    border-radius: 24px;
+    padding: 12px;
+    text-align: center;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .oauth-icon { border: 1px solid #000; border-radius: 50%; width: 16px; height: 16px; }
+
+  /* Screenshot placeholder */
+  .screenshot-wrap { padding: 0 60px 60px; }
+  .screenshot {
+    border: 2px solid #000;
+    border-radius: 14px;
+    padding: 16px;
+    background: repeating-linear-gradient(-45deg, #fff, #fff 10px, #f4f4f4 10px, #f4f4f4 20px);
+  }
+  .screenshot-inner {
+    background: #fff;
+    border: 1.5px solid #000;
+    border-radius: 6px;
+    padding: 10px;
+  }
+  .screenshot-topbar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    border-bottom: 1px solid #000;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+    font-size: 10px;
+  }
+  .screenshot-topbar .field { flex: 1; margin: 0; padding: 4px 10px; border-radius: 4px; }
+  .screenshot-body { display: flex; gap: 10px; font-size: 10px; }
+  .screenshot-side { width: 100px; border-right: 1px solid #ccc; padding-right: 10px; }
+  .screenshot-side div { padding: 4px 0; }
+  .screenshot-main { flex: 1; }
+  .placeholder-lines div { height: 6px; background: #ddd; margin-bottom: 5px; border-radius: 1px; }
+
+  .caption {
+    margin: 10px 60px 30px;
+    font-size: 11px;
+    color: #333;
+    border-top: 1px dashed #999;
+    padding-top: 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="wf">
+  <div class="navbar">
+    <div class="logo-box">CLAMPED</div>
+    <div class="navlinks">
+      <span>Features <span class="caret">&#9662;</span></span>
+      <span>Solutions <span class="caret">&#9662;</span></span>
+      <span>Guides</span>
+      <span>Pricing</span>
+    </div>
+    <div class="nav-right">
+      <div class="btn btn-fill">Get it free</div>
+      <div class="icon-circle">&#128269;</div>
+      <span style="font-size:13px;">Sign in</span>
+    </div>
+  </div>
+
+  <div class="banner">
+    <span>Join us next month for a live demo on triaging tickets with your team.</span>
+    <u>Register now</u>
+    <div class="x">&times;</div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-left">
+      <div class="hero-headline">Turn bug reports<br>into verified fixes.</div>
+      <div class="hero-sub">Report, assign, and track every issue through one shared workflow &mdash; built for small teams who don't want to configure a heavyweight tool.</div>
+    </div>
+    <div class="hero-right">
+      <div class="field-label">Work email</div>
+      <div class="field">you@team.com</div>
+      <div class="field-hint">Use a team email to find your teammates.</div>
+      <div class="btn-signup">Sign up</div>
+      <div class="divider"><span class="line"></span>Or continue with<span class="line"></span></div>
+      <div class="btn-oauth"><span class="oauth-icon"></span> Google</div>
+    </div>
+  </div>
+
+  <div class="screenshot-wrap">
+    <div class="screenshot">
+      <div class="screenshot-inner">
+        <div class="screenshot-topbar">
+          <span>&#9776;</span><span>&#9633;</span><span style="font-weight:bold;">CLAMPED</span>
+          <div class="field">&#128269; Search</div>
+          <span class="btn" style="padding:3px 8px;">+ Create</span>
+          <span>&#128276;</span><span>&#9881;</span><span class="icon-circle" style="width:18px;height:18px;">BV</span>
+        </div>
+        <div class="screenshot-body">
+          <div class="screenshot-side">
+            <div>For you</div>
+            <div>Recent</div>
+            <div>Tickets</div>
+            <div>Team</div>
+          </div>
+          <div class="screenshot-main placeholder-lines">
+            <div style="width:60%; height:14px;"></div>
+            <div style="width:90%"></div>
+            <div style="width:80%"></div>
+            <div style="width:70%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="caption"><b>Home Page (logged out).</b> Public landing page, laid out after Jira's own homepage
+structure: top nav with a primary CTA, a dismissible promo banner, a split hero (headline left / signup form
+right), and a product screenshot preview below the fold. A visitor reads the pitch, signs up with a work email
+or Google, or clicks &ldquo;Sign in&rdquo; if they already have an account.</div>
+
+</body>
+</html>

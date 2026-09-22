@@ -1,0 +1,510 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Clamped Wireframes</title>
+<style>
+  @page { size: letter landscape; margin: 0.4in; }
+  * { box-sizing: border-box; }
+  body { font-family: Arial, Helvetica, sans-serif; color: #000; margin: 0; background: #fff; }
+  .page { page-break-after: always; min-height: 7.5in; display: flex; flex-direction: column; }
+  .page:last-child { page-break-after: auto; }
+
+  .req-label { font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .wf { border: 2px solid #000; flex: 1; display: flex; flex-direction: column; background: #fff; }
+
+  .wf-header { display: flex; align-items: center; gap: 16px; border-bottom: 2px solid #000; padding: 8px 14px; flex-shrink: 0; }
+  .wf-logo { border: 1.5px solid #000; padding: 4px 10px; font-size: 12px; }
+  .wf-header-spacer { flex: 1; }
+  .wf-avatar { border: 1.5px solid #000; border-radius: 50%; width: 22px; height: 22px; flex-shrink: 0; }
+  .navword { font-size: 11px; }
+
+  .wf-body { display: flex; flex: 1; min-height: 0; }
+  .wf-sidebar { width: 100px; border-right: 2px solid #000; padding: 10px 0; flex-shrink: 0; }
+  .wf-sidebar div { padding: 6px 12px; font-size: 10px; border-bottom: 1px solid #eee; }
+  .wf-sidebar .active { background: #eee; }
+  .wf-content { flex: 1; padding: 16px; overflow: hidden; }
+  .wf-footer { border-top: 2px solid #000; padding: 5px 12px; display: flex; gap: 14px; flex-shrink: 0; }
+  .wf-footer span { font-size: 9px; color: #555; }
+
+  .box { border: 1px solid #000; }
+  .btn { border: 1.5px solid #000; padding: 5px 12px; font-size: 10px; display: inline-block; text-align: center; }
+  .tag { border: 1px solid #000; padding: 2px 8px; font-size: 8.5px; display: inline-block; }
+  .label { font-size: 9px; color: #555; }
+
+  /* Gray bar text placeholders */
+  .bar { height: 8px; background: #ddd; }
+  .bar.w90 { width: 90%; } .bar.w70 { width: 70%; } .bar.w50 { width: 50%; } .bar.w30 { width: 30%; }
+
+  .caption { margin-top: 8px; font-size: 10px; color: #333; line-height: 1.4; border-top: 1px dashed #999; padding-top: 6px; }
+  .caption b { color: #000; }
+
+  h2.section { font-size: 12px; margin: 0 0 8px; }
+  .card { border: 1px solid #000; padding: 10px; }
+  .row { display: flex; gap: 10px; }
+  .row > * { flex: 1; }
+
+  /* Form panel + chip-selector + field-with-icon, for richer low-fi forms */
+  .panel { border: 1px solid #000; padding: 12px; margin-bottom: 12px; }
+  .panel-title { font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 10px; }
+  .field-icon { border: 1px solid #000; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; height: 22px; font-size: 9px; color: #999; }
+  .chip-row { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip-opt { border: 1px solid #000; padding: 3px 10px; font-size: 9px; }
+  .chip-opt.sel { background: #000; color: #fff; }
+
+  /* generic image / screenshot placeholder box (crossed rectangle = universal low-fi image placeholder) */
+  .imgph { border: 1px solid #000; position: relative; background:
+    linear-gradient(to top left, transparent calc(50% - 0.5px), #000 50%, transparent calc(50% + 0.5px)),
+    linear-gradient(to top right, transparent calc(50% - 0.5px), #000 50%, transparent calc(50% + 0.5px)); }
+</style>
+</head>
+<body>
+
+<!-- ============ PAGE 1: HOME (logged out) ============ -->
+<div class="page">
+  <div class="req-label">Category 1 &mdash; Home Page (Logged Out)</div>
+  <div class="wf">
+    <div class="wf-header">
+      <div class="wf-logo">CLAMPED</div>
+      <span class="navword">Features</span><span class="navword">Pricing</span>
+      <div class="wf-header-spacer"></div>
+      <span class="navword">Sign in</span>
+      <div class="btn">Get started</div>
+    </div>
+    <div class="wf-content" style="padding:24px 40px;">
+      <div class="row" style="margin-bottom:20px;">
+        <div>
+          <div class="bar w70" style="height:20px; margin-bottom:6px;"></div>
+          <div class="bar w50" style="height:20px; margin-bottom:14px;"></div>
+          <div class="bar w90" style="margin-bottom:5px;"></div>
+          <div class="bar w70"></div>
+        </div>
+        <div class="box" style="padding:14px;">
+          <div class="label" style="margin-bottom:6px;">Work email</div>
+          <div class="box" style="height:26px; margin-bottom:8px;"></div>
+          <div class="btn" style="width:100%; text-align:center;">Sign up</div>
+        </div>
+      </div>
+      <div class="imgph" style="height:150px;"></div>
+    </div>
+    <div class="wf-footer"><span>About</span><span>Contact</span><span>&copy; Clamped</span></div>
+  </div>
+  <div class="caption"><b>Home Page (logged out).</b> Public landing page, structured after Jira's homepage:
+  top nav, a split hero (headline left / signup form right), and a product preview below. A visitor reads the
+  pitch, signs up with a work email, or clicks &ldquo;Sign in&rdquo; if they already have an account.</div>
+</div>
+
+<!-- ============ PAGE 2: ISSUES ============ -->
+<div class="page">
+  <div class="req-label">Category 2 &mdash; Issues Page</div>
+  <div class="wf">
+    <div class="wf-header">
+      <div class="wf-logo">CLAMPED</div>
+      <div class="box" style="width:180px; height:20px;"></div>
+      <div class="wf-header-spacer"></div>
+      <div class="wf-avatar"></div>
+    </div>
+    <div class="wf-body">
+      <div class="wf-sidebar">
+        <div>Dashboard</div><div class="active">Issues</div><div>Messages</div><div>Team</div>
+      </div>
+      <div class="wf-content">
+        <h2 class="section">Reported by Me</h2>
+        <div class="row" style="margin-bottom:16px;">
+          <div class="card"><div class="bar w70" style="margin-bottom:6px;"></div><div class="label" style="margin-bottom:6px;"># Project</div><span class="tag">Type</span> <span class="tag">Severity</span> <span class="tag">Status</span></div>
+          <div class="card"><div class="bar w50" style="margin-bottom:6px;"></div><div class="label" style="margin-bottom:6px;"># Project</div><span class="tag">Type</span> <span class="tag">Severity</span> <span class="tag">Status</span></div>
+          <div class="card"><div class="bar w90" style="margin-bottom:6px;"></div><div class="label" style="margin-bottom:6px;"># Project</div><span class="tag">Type</span> <span class="tag">Severity</span> <span class="tag">Status</span></div>
+        </div>
+        <h2 class="section">Assigned to Me</h2>
+        <div class="row" style="margin-bottom:16px;">
+          <div class="card"><div class="bar w70" style="margin-bottom:6px;"></div><div class="label" style="margin-bottom:6px;"># Project</div><span class="tag">Type</span> <span class="tag">Severity</span> <span class="tag">Status</span></div>
+          <div class="card"><div class="bar w50" style="margin-bottom:6px;"></div><div class="label" style="margin-bottom:6px;"># Project</div><span class="tag">Type</span> <span class="tag">Severity</span> <span class="tag">Status</span></div>
+        </div>
+        <h2 class="section">Verified by Me</h2>
+        <div class="row">
+          <div class="card"><div class="bar w70" style="margin-bottom:6px;"></div><div class="label" style="margin-bottom:6px;"># Project</div><span class="tag">Type</span> <span class="tag">Severity</span> <span class="tag">Status</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="wf-footer"><span>About</span><span>Contact</span><span>&copy; Clamped</span></div>
+  </div>
+  <div class="caption"><b>Issues Page.</b> Three sections group every issue by the user's relationship to it &mdash;
+  reported, assigned, or verified. Each card shows the project the ticket belongs to. A user scans a section and
+  clicks a card to open the issue detail.</div>
+</div>
+
+<!-- ============ PAGE 3: MESSAGES ============ -->
+<div class="page">
+  <div class="req-label">Category 3 &mdash; Messages Page</div>
+  <div class="wf">
+    <div class="wf-header">
+      <div class="wf-logo">CLAMPED</div>
+      <div class="box" style="width:180px; height:20px;"></div>
+      <div class="wf-header-spacer"></div>
+      <div class="wf-avatar"></div>
+    </div>
+    <div class="wf-body">
+      <div class="wf-sidebar">
+        <div>Dashboard</div><div>Issues</div><div class="active">Messages</div><div>Team</div>
+      </div>
+      <div style="width:120px; border-right:2px solid #000; padding:10px;">
+        <div class="label" style="margin-bottom:6px;">PROJECTS</div>
+        <div style="font-size:10px; margin-bottom:6px; background:#eee; padding:2px 0;"># Project A</div>
+        <div style="font-size:10px; margin-bottom:6px;"># Project B</div>
+        <div style="font-size:10px;"># Project C</div>
+      </div>
+      <div class="wf-content" style="display:flex; flex-direction:column;">
+        <div style="flex:1;">
+          <div style="display:flex; gap:8px; margin-bottom:10px;">
+            <div class="wf-avatar"></div>
+            <div class="box" style="padding:8px; width:220px;"><div class="bar w90" style="margin-bottom:4px;"></div><div class="bar w50"></div></div>
+          </div>
+          <div style="display:flex; gap:8px; margin-bottom:10px; flex-direction:row-reverse;">
+            <div class="wf-avatar"></div>
+            <div class="box" style="padding:8px; width:220px;"><div class="bar w70"></div></div>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <div class="wf-avatar"></div>
+            <div class="box" style="padding:8px; width:220px;"><div class="bar w90" style="margin-bottom:4px;"></div><div class="bar w30"></div></div>
+          </div>
+        </div>
+        <div class="row" style="margin-top:10px;">
+          <div class="box" style="height:26px;"></div>
+          <div class="btn" style="flex:0 0 auto;">Send</div>
+        </div>
+      </div>
+    </div>
+    <div class="wf-footer"><span>About</span><span>Contact</span><span>&copy; Clamped</span></div>
+  </div>
+  <div class="caption"><b>Messages Page.</b> A channel list on the left (one per project) and a message thread
+  on the right. A user picks a project, reads the thread, and types into the input box at the bottom.</div>
+</div>
+
+<!-- ============ PAGE 4: TEAM ============ -->
+<div class="page">
+  <div class="req-label">Category 4 &mdash; Team Page</div>
+  <div class="wf">
+    <div class="wf-header">
+      <div class="wf-logo">CLAMPED</div>
+      <div class="box" style="width:180px; height:20px;"></div>
+      <div class="wf-header-spacer"></div>
+      <div class="wf-avatar"></div>
+    </div>
+    <div class="wf-body">
+      <div class="wf-sidebar">
+        <div>Dashboard</div><div>Issues</div><div>Messages</div><div class="active">Team</div>
+      </div>
+      <div class="wf-content">
+        <div class="row">
+          <div class="card">
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+              <div class="bar w50"></div><span class="tag">Role</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <div style="display:flex; align-items:center; gap:6px;"><div class="wf-avatar"></div><div class="bar w50"></div></div>
+              <span class="tag">Role</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <div style="display:flex; align-items:center; gap:6px;"><div class="wf-avatar"></div><div class="bar w30"></div></div>
+              <span class="tag">Role</span>
+            </div>
+            <div class="btn">Go to Project</div>
+          </div>
+          <div class="card">
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+              <div class="bar w70"></div><span class="tag">Role</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <div style="display:flex; align-items:center; gap:6px;"><div class="wf-avatar"></div><div class="bar w50"></div></div>
+              <span class="tag">Role</span>
+            </div>
+            <div class="btn">Go to Project</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="wf-footer"><span>About</span><span>Contact</span><span>&copy; Clamped</span></div>
+  </div>
+  <div class="caption"><b>Team Page.</b> One card per project the user belongs to, listing every teammate on
+  that project and their role. A user scans the roster or clicks &ldquo;Go to Project&rdquo; to jump there.</div>
+</div>
+
+<!-- ============ PAGE 5: DASHBOARD (logged in) ============ -->
+<div class="page">
+  <div class="req-label">Category 5 &mdash; Dashboard (Logged In)</div>
+  <div class="wf">
+    <div class="wf-header">
+      <div class="wf-logo">CLAMPED</div>
+      <div class="box" style="width:180px; height:20px;"></div>
+      <div class="wf-header-spacer"></div>
+      <div class="wf-avatar"></div>
+    </div>
+    <div class="wf-body">
+      <div class="wf-sidebar">
+        <div class="active">Dashboard</div><div>Issues</div><div>Messages</div><div>Team</div>
+      </div>
+      <div class="wf-content">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <div class="bar w30" style="height:14px;"></div>
+          <div><span class="tag">Open</span> <span class="tag">Patched</span> <span class="tag">Overdue</span></div>
+        </div>
+        <h2 class="section">My Issues</h2>
+        <div class="row" style="margin-bottom:16px;">
+          <div class="card"><div class="bar w50" style="margin-bottom:6px;"></div><div class="bar w70"></div></div>
+          <div class="card"><div class="bar w50" style="margin-bottom:6px;"></div><div class="bar w70"></div></div>
+          <div class="card"><div class="bar w50" style="margin-bottom:6px;"></div><div class="bar w70"></div></div>
+        </div>
+        <h2 class="section">My Projects</h2>
+        <div class="row">
+          <div class="card"><div class="bar w50" style="margin-bottom:6px;"></div><div class="bar w70"></div></div>
+          <div class="card"><div class="bar w50" style="margin-bottom:6px;"></div><div class="bar w70"></div></div>
+          <div class="card"><div class="bar w50" style="margin-bottom:6px;"></div><div class="bar w70"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="wf-footer"><span>About</span><span>Contact</span><span>&copy; Clamped</span></div>
+  </div>
+  <div class="caption"><b>Dashboard (logged in).</b> Landing page once a user signs in &mdash; an overview of
+  open/patched/overdue counts, recent issues, and recent projects, each linking into its full page.</div>
+</div>
+
+<!-- ============ PAGE 6: TICKET LIST ============ -->
+<div class="page">
+  <div class="req-label">Extra &mdash; Ticket List</div>
+  <div class="wf">
+    <div class="wf-header">
+      <div class="wf-logo">CLAMPED</div>
+      <div class="box" style="width:180px; height:20px;"></div>
+      <div class="wf-header-spacer"></div>
+      <div class="wf-avatar"></div>
+    </div>
+    <div class="wf-body">
+      <div class="wf-sidebar">
+        <div>Dashboard</div><div class="active">Issues</div><div>Messages</div><div>Team</div>
+      </div>
+      <div class="wf-content">
+        <div class="box" style="display:flex; align-items:center; gap:10px; padding:8px 10px; margin-bottom:14px;">
+          <div class="box" style="width:110px; height:20px;"></div>
+          <div class="box" style="width:110px; height:20px;"></div>
+          <div class="box" style="width:110px; height:20px;"></div>
+          <div style="font-size:9px;">&#9634; My issues only</div>
+          <div class="wf-header-spacer"></div>
+          <span class="label">6 issues</span>
+        </div>
+
+        <div class="card" style="margin-bottom:8px;">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
+            <div class="bar w50" style="flex:1;"></div>
+            <span class="tag"># Project</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span class="tag">Severity</span><span class="tag">Status</span><span class="tag">Due</span>
+            <div class="wf-header-spacer"></div>
+            <div class="wf-avatar" style="width:16px; height:16px;"></div><span class="tag">Assignee</span>
+            <div class="btn">Assign</div>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:8px;">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
+            <div class="bar w70" style="flex:1;"></div>
+            <span class="tag"># Project</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span class="tag">Severity</span><span class="tag">Status</span><span class="tag">Due</span>
+            <div class="wf-header-spacer"></div>
+            <span class="label">Unassigned</span>
+            <div class="btn">Assign</div>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:8px;">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
+            <div class="bar w30" style="flex:1;"></div>
+            <span class="tag"># Project</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span class="tag">Severity</span><span class="tag">Status</span><span class="tag">Due</span>
+            <div class="wf-header-spacer"></div>
+            <div class="wf-avatar" style="width:16px; height:16px;"></div><span class="tag">Assignee</span>
+            <div class="btn">Assign</div>
+          </div>
+        </div>
+        <div class="card">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
+            <div class="bar w90" style="flex:1;"></div>
+            <span class="tag"># Project</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span class="tag">Severity</span><span class="tag">Status</span><span class="tag">Due</span>
+            <div class="wf-header-spacer"></div>
+            <div class="wf-avatar" style="width:16px; height:16px;"></div><span class="tag">Verifier</span>
+            <div class="btn">Assign</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="wf-footer"><span>About</span><span>Contact</span><span>&copy; Clamped</span></div>
+  </div>
+  <div class="caption"><b>Ticket List.</b> A flat, filterable list of every ticket across projects &mdash; a
+  project filter, status filter, severity filter, and a &ldquo;my issues only&rdquo; toggle narrow the rows. Each
+  row shows the ticket's project, severity/status/due tags, and who (if anyone) is currently assigned or
+  verifying it, with a quick action to assign it.</div>
+</div>
+
+<!-- ============ PAGE 7: TICKET DETAIL ============ -->
+<div class="page">
+  <div class="req-label">Extra &mdash; Ticket Detail</div>
+  <div class="wf">
+    <div class="wf-header">
+      <div class="wf-logo">CLAMPED</div>
+      <div class="box" style="width:180px; height:20px;"></div>
+      <div class="wf-header-spacer"></div>
+      <div class="wf-avatar"></div>
+    </div>
+    <div class="wf-body">
+      <div class="wf-sidebar">
+        <div>Dashboard</div><div class="active">Issues</div><div>Messages</div><div>Team</div>
+      </div>
+      <div class="wf-content">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+          <span style="font-size:12px;">&larr;</span>
+          <div class="bar w50" style="height:14px;"></div>
+        </div>
+        <div class="label" style="margin-bottom:8px;"># Project A</div>
+        <div style="margin-bottom:12px;">
+          <span class="tag">Type</span> <span class="tag">Severity</span> <span class="tag">Status</span> <span class="tag">Due</span>
+        </div>
+
+        <div class="bar w90" style="margin-bottom:5px;"></div>
+        <div class="bar w70" style="margin-bottom:16px;"></div>
+
+        <div class="box" style="border-style:solid; border-width:0; border-top:1px solid #000; margin-bottom:12px;"></div>
+
+        <div class="label" style="margin-bottom:8px;">CURRENT ASSIGNMENTS</div>
+        <div style="display:flex; gap:16px; margin-bottom:16px;">
+          <div style="display:flex; align-items:center; gap:6px;"><div class="wf-avatar"></div><div class="bar w30"></div><span class="tag">Reporter</span></div>
+          <div style="display:flex; align-items:center; gap:6px;"><div class="wf-avatar"></div><div class="bar w30"></div><span class="tag">Assignee</span></div>
+          <div style="display:flex; align-items:center; gap:6px;"><div class="wf-avatar"></div><div class="bar w30"></div><span class="tag">Verifier</span></div>
+        </div>
+
+        <div style="display:flex; gap:10px;">
+          <div class="btn">Take as Assignee</div>
+          <div class="btn">Take as Verifier</div>
+          <div class="btn">Revoke</div>
+          <div class="btn">Assign Member</div>
+        </div>
+      </div>
+    </div>
+    <div class="wf-footer"><span>About</span><span>Contact</span><span>&copy; Clamped</span></div>
+  </div>
+  <div class="caption"><b>Ticket Detail.</b> The full view of one ticket &mdash; its tags, description, and who
+  currently holds the reporter/assignee/verifier roles. A user can take an open role, revoke their own, or (as a
+  lead) assign a teammate to one.</div>
+</div>
+
+<!-- ============ PAGE 8: ADD TICKET ============ -->
+<div class="page">
+  <div class="req-label">Extra &mdash; Add Ticket</div>
+  <div class="wf">
+    <div class="wf-header">
+      <div class="wf-logo">CLAMPED</div>
+      <div class="box" style="width:180px; height:20px;"></div>
+      <div class="wf-header-spacer"></div>
+      <div class="wf-avatar"></div>
+    </div>
+    <div class="wf-body">
+      <div class="wf-sidebar">
+        <div>Dashboard</div><div class="active">Issues</div><div>Messages</div><div>Team</div>
+      </div>
+      <div class="wf-content" style="overflow-y:auto;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+          <div class="bar w30" style="height:14px;"></div>
+          <span class="label">* required</span>
+        </div>
+
+        <div class="row" style="gap:16px; align-items:flex-start;">
+
+          <!-- LEFT: main form -->
+          <div style="flex:1.4;">
+            <div class="panel">
+              <div class="panel-title">Basic Info</div>
+              <div class="label" style="margin-bottom:3px;">Project *</div>
+              <div class="field-icon" style="margin-bottom:10px;"><span></span><span>&#9662;</span></div>
+              <div class="label" style="margin-bottom:3px;">Title *</div>
+              <div class="box" style="height:22px; margin-bottom:10px;"></div>
+              <div class="label" style="margin-bottom:3px;">Description</div>
+              <div class="box" style="padding:6px; margin-bottom:0;">
+                <div class="bar w90" style="margin-bottom:5px;"></div>
+                <div class="bar w70" style="margin-bottom:5px;"></div>
+                <div class="bar w50"></div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-title">Classification</div>
+              <div class="label" style="margin-bottom:4px;">Issue Type</div>
+              <div class="chip-row" style="margin-bottom:10px;">
+                <span class="chip-opt sel">Security</span><span class="chip-opt">Reliability</span>
+                <span class="chip-opt">Performance</span><span class="chip-opt">UX</span><span class="chip-opt">Other</span>
+              </div>
+              <div class="label" style="margin-bottom:4px;">Severity *</div>
+              <div class="chip-row" style="margin-bottom:10px;">
+                <span class="chip-opt">Low</span><span class="chip-opt">Medium</span>
+                <span class="chip-opt sel">High</span><span class="chip-opt">Critical</span>
+              </div>
+              <div class="label" style="margin-bottom:4px;">Status *</div>
+              <div class="chip-row" style="margin-bottom:10px;">
+                <span class="chip-opt sel">Reported</span><span class="chip-opt">In Progress</span>
+                <span class="chip-opt">Patched</span><span class="chip-opt">Under Review</span><span class="chip-opt">Verified</span>
+              </div>
+              <div class="label" style="margin-bottom:3px;">Due At *</div>
+              <div class="field-icon" style="max-width:200px;"><span></span><span>&#128197;</span></div>
+            </div>
+          </div>
+
+          <!-- RIGHT: linked code, evidence, live preview -->
+          <div style="flex:1;">
+            <div class="panel">
+              <div class="panel-title">Linked Code (Optional)</div>
+              <div class="label" style="margin-bottom:3px;">Repository</div>
+              <div class="box" style="height:22px; margin-bottom:8px;"></div>
+              <div class="label" style="margin-bottom:3px;">Commit / PR ID</div>
+              <div class="box" style="height:22px;"></div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-title">Evidence Reference (Optional)</div>
+              <div class="label" style="margin-bottom:3px;">Machine ID</div>
+              <div class="box" style="height:22px; margin-bottom:8px;"></div>
+              <div class="label" style="margin-bottom:3px;">Local Evidence ID</div>
+              <div class="box" style="height:22px; margin-bottom:8px;"></div>
+              <div class="label" style="margin-bottom:3px;">Evidence Note</div>
+              <div class="box" style="height:22px;"></div>
+            </div>
+
+            <div class="panel" style="background:#fafafa;">
+              <div class="panel-title">Preview</div>
+              <div class="card" style="background:#fff;">
+                <div class="bar w70" style="margin-bottom:6px;"></div>
+                <div class="label" style="margin-bottom:6px;"># Project</div>
+                <span class="tag">Security</span> <span class="tag">High</span> <span class="tag">Reported</span>
+              </div>
+            </div>
+
+            <div style="display:flex; gap:8px;">
+              <div class="btn" style="flex:1; text-align:center;">Cancel</div>
+              <div class="btn" style="flex:2; text-align:center; background:#000; color:#fff;">Submit</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <div class="wf-footer"><span>About</span><span>Contact</span><span>&copy; Clamped</span></div>
+  </div>
+  <div class="caption"><b>Add Ticket.</b> The report form, grouped into panels &mdash; Basic Info and
+  Classification on the left (type/severity/status as tap-to-select chips), Linked Code and optional Evidence
+  Reference on the right, with a live preview of the card this ticket will produce once submitted.</div>
+</div>
+
+</body>
+</html>
