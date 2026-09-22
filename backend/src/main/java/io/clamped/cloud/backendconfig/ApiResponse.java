@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.backendconfig;
+package io.clamped.cloud.backendconfig;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

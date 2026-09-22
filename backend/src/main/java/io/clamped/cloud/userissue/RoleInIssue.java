@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.userissue;
+package io.clamped.cloud.userissue;
 
 public enum RoleInIssue {
     REPORTER,  // Created the issue

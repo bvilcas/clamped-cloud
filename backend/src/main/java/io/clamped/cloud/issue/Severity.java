@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.issue;
+package io.clamped.cloud.issue;
 
 public enum Severity {
     LOW,

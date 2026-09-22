@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.notification;
+package io.clamped.cloud.notification;
 
 public enum NotificationType {
     ISSUE_ASSIGNED,        // You were assigned to an issue by a lead

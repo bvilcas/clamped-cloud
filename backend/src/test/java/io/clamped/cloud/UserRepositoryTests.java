@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud;
+package io.clamped.cloud;
 
 import io.clamped.cloud.user.Role;
 import io.clamped.cloud.user.User;

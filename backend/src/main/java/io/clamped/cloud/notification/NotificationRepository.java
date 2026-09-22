@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.notification;
+package io.clamped.cloud.notification;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

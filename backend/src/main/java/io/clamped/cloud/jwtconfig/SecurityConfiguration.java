@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.jwtconfig;
+package io.clamped.cloud.jwtconfig;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

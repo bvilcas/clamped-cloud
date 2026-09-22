@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.backendconfig;
+package io.clamped.cloud.backendconfig;
 
 import io.clamped.cloud.issue.Issue;
 import io.clamped.cloud.issue.IssueRepository;
@@ -10,7 +10,6 @@ import io.clamped.cloud.project.Project;
 import io.clamped.cloud.project.ProjectRepository;
 import io.clamped.cloud.userissue.RoleInIssue;
 import io.clamped.cloud.userissue.UserIssue;
-import io.clamped.cloud.userissue.UserIssueId;
 import io.clamped.cloud.userissue.UserIssueRepository;
 import io.clamped.cloud.userproject.ProjectRole;
 import io.clamped.cloud.userproject.UserProject;
@@ -97,7 +96,7 @@ public class DataInitializer {
             UserProject link1 = new UserProject();
             link1.setUser(brent);
             link1.setProject(project1);
-            link1.setRole(ProjectRole.PROGRAMMER);
+            link1.setRole(ProjectRole.MEMBER);
             userProjectRepository.save(link1);
 
             UserProject link2 = new UserProject();
@@ -111,8 +110,6 @@ public class DataInitializer {
                     "Authentication bypass in MFA",
                     "Attackers can brute-force 2FA codes due to missing retry limits.",
                     IssueType.SECURITY,
-                    "CVE-2025-4101",
-                    "CWE-307",
                     Severity.HIGH,
                     IssueStatus.REPORTED,
                     null,
@@ -129,8 +126,6 @@ public class DataInitializer {
                     "SQL Injection in search query",
                     "Unsanitized input appended to SQL statement allows data exfiltration.",
                     IssueType.SECURITY,
-                    "CVE-2025-5533",
-                    "CWE-89",
                     Severity.CRITICAL,
                     IssueStatus.IN_PROGRESS,
                     null,
@@ -147,8 +142,6 @@ public class DataInitializer {
                     "Broken access control in document preview",
                     "Users can view other teams' files by guessing preview IDs.",
                     IssueType.SECURITY,
-                    null,
-                    "CWE-639",
                     Severity.HIGH,
                     IssueStatus.REPORTED,
                     null,
@@ -165,8 +158,6 @@ public class DataInitializer {
                     "Insecure object reference",
                     "Users can access restricted files by guessing object IDs.",
                     IssueType.SECURITY,
-                    null,
-                    "CWE-639",
                     Severity.HIGH,
                     IssueStatus.REPORTED,
                     null,
@@ -186,7 +177,6 @@ public class DataInitializer {
 
             // === USER ISSUE LINKS ===
             UserIssue ui1 = UserIssue.builder()
-                    .id(new UserIssueId(user1.getId(), i1.getId()))
                     .user(user1)
                     .issue(i1)
                     .role(RoleInIssue.REPORTER)
@@ -195,7 +185,6 @@ public class DataInitializer {
                     .build();
 
             UserIssue ui2 = UserIssue.builder()
-                    .id(new UserIssueId(brent.getId(), i2.getId()))
                     .user(brent)
                     .issue(i2)
                     .role(RoleInIssue.ASSIGNEE)
@@ -204,7 +193,6 @@ public class DataInitializer {
                     .build();
 
             UserIssue ui3 = UserIssue.builder()
-                    .id(new UserIssueId(user3.getId(), i3.getId()))
                     .user(user3)
                     .issue(i3)
                     .role(RoleInIssue.VERIFIER)

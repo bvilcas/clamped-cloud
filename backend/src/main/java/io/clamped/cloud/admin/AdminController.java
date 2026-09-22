@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.admin;
+package io.clamped.cloud.admin;
 
 import io.clamped.cloud.authentication.AuthenticationService;
 import io.clamped.cloud.authentication.RegisterRequest;

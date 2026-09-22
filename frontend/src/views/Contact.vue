@@ -48,7 +48,8 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <v-container class="pa-8" style="max-width: 680px">
+  <v-container fluid class="pa-8">
+   <div class="narrow-content">
     <h1 class="text-info mb-2">Contact Us</h1>
     <p class="intro mb-6">
       Have questions, feedback, or need support with Clamped?
@@ -102,10 +103,15 @@ async function handleSubmit() {
         Send Message
       </v-btn>
     </v-form>
+   </div>
   </v-container>
 </template>
 
 <style scoped>
+.narrow-content {
+  max-width: 680px;
+}
+
 .intro {
   color: rgb(var(--v-theme-secondary));
 }

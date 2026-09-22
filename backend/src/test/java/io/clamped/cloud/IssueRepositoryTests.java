@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud;
+package io.clamped.cloud;
 
 import io.clamped.cloud.issue.Issue;
 import io.clamped.cloud.issue.IssueRepository;
@@ -17,7 +17,7 @@ import java.util.List;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @DataJpaTest
-class VulnerabilityRepositoryTests {
+class IssueRepositoryTests {
 
     @Autowired
     private TestEntityManager entityManager;
@@ -38,8 +38,6 @@ class VulnerabilityRepositoryTests {
                 "SQL Injection",
                 "Critical bug",
                 IssueType.SECURITY,
-                "CVE-123",
-                "CWE-89",
                 Severity.CRITICAL,
                 IssueStatus.REPORTED,
                 null,

@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.userissue;
+package io.clamped.cloud.userissue;
 
 import io.clamped.cloud.issue.IssueStatus;
 import io.clamped.cloud.issue.IssueType;
@@ -12,8 +12,6 @@ public record IssueAssignmentDto(
         String title,
         String description,
         IssueType type,
-        String cveId,
-        String cweId,
         Severity severity,
         IssueStatus status,
         Instant reportedAt,
@@ -22,5 +20,9 @@ public record IssueAssignmentDto(
         Instant verifiedAt,
         String repository,
         String commitHash,
+        String eventApp,
+        String eventHost,
+        String eventType,
+        String eventExtra,
         List<AssignmentEntry> assignments
 ) {}

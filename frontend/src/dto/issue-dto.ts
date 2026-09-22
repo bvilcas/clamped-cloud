@@ -3,8 +3,6 @@ export interface IssueDTO {
     title: string
     description: string | null
     type: string | null
-    cveId: string | null
-    cweId: string | null
     severity: string
     status: string
     updatedAt: string | null
@@ -14,6 +12,10 @@ export interface IssueDTO {
     verifiedAt: string | null
     repository: string | null
     commitHash: string | null
+    eventApp: string | null
+    eventHost: string | null
+    eventType: string | null
+    eventExtra: string | null
     projectId: number
     projectName?: string
 }

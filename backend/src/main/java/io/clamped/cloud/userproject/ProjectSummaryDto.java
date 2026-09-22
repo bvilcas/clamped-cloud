@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.userproject;
+package io.clamped.cloud.userproject;
 
 import java.time.Instant;
 

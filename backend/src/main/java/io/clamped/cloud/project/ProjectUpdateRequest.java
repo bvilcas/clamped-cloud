@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.project;
+package io.clamped.cloud.project;
 
 public record ProjectUpdateRequest(
         String name,

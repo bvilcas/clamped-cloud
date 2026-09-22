@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.event;
+package io.clamped.cloud.event;
 
 import io.clamped.cloud.issue.Issue;
 import io.clamped.cloud.issue.IssueRepository;
@@ -79,6 +79,10 @@ public class EventGroupService {
                     .sourceFile(request.sourceFile())
                     .sourceLine(request.sourceLine())
                     .sourceMethod(request.sourceMethod())
+                    .appName(request.appName())
+                    .host(request.host())
+                    .eventType(request.eventType())
+                    .extra(request.extra())
                     .project(project)
                     .build();
         }
@@ -173,6 +177,10 @@ public class EventGroupService {
                 g.getSourceFile(),
                 g.getSourceLine(),
                 g.getSourceMethod(),
+                g.getAppName(),
+                g.getHost(),
+                g.getEventType(),
+                g.getExtra(),
                 g.getLinkedIssue() != null ? g.getLinkedIssue().getId() : null,
                 g.getProject().getId()
         );

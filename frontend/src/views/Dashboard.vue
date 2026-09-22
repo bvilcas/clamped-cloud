@@ -48,7 +48,7 @@ const projects = ref<ProjectDTO[]>([])
     };
 
 
-    const fetchUserVulns = async () => {
+    const fetchUserIssues = async () => {
       const base = "/api/v1/userissues";
 
       try {
@@ -70,9 +70,9 @@ const projects = ref<ProjectDTO[]>([])
 
       } catch (err: unknown) {
         if (err instanceof Error) {
-          console.error(" Vulnerabilities fetch failed:", err.message);
+          console.error(" Issues fetch failed:", err.message);
         } else {
-          console.error(" Vulnerabilities fetch failed with unknown error");
+          console.error(" Issues fetch failed with unknown error");
         }
         authStore.logout(); // force logout if refresh failed mid-fetch
       }
@@ -86,7 +86,7 @@ const projects = ref<ProjectDTO[]>([])
 
     // we defined functions above now we call them in order
     fetchProfile().then(() => {
-      fetchUserVulns();
+      fetchUserIssues();
       fetchProjects();
     });
   });
@@ -105,18 +105,18 @@ const projects = ref<ProjectDTO[]>([])
 </script>
 
 <template>
-  <v-container class="pa-8">
+  <v-container fluid class="pa-8">
     <!-- Title row -->
     <div class="title-row">
       <h1 class="text-info">Where You Left Off</h1>
       <div class="stats-bar text-secondary text-body-1">
-        <span>Open Vulns: <strong>{{ reported.length }}</strong></span>
+        <span>Open Issues: <strong>{{ reported.length }}</strong></span>
         <span>Patched: <strong>{{ verified.length }}</strong></span>
         <span>Overdue: <strong>2</strong></span>
       </div>
     </div>
 
-    <!-- First row: vuln cards -->
+    <!-- First row: issue cards -->
     <div class="section-header">
       <h2>My Issues</h2>
       <v-btn color="info" @click="router.push('/report')">+ Report Issue</v-btn>
@@ -237,6 +237,11 @@ const projects = ref<ProjectDTO[]>([])
 </template>
 
 <style scoped>
+:deep(.v-container) {
+  max-width: 1800px;
+  margin-inline: auto;
+}
+
 .title-row {
   display: flex;
   align-items: center;

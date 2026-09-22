@@ -22,7 +22,7 @@ import Contact from '@/views/Contact.vue'
 import About from '@/views/About.vue'
 import Messages from '@/views/Messages.vue'
 import Team from '@/views/Team.vue'
-import Assignments from '@/views/Assignments.vue'
+import IssueDetail from '@/views/IssueDetail.vue'
 import Notifications from '@/views/Notifications.vue'
 import Calendar from '@/views/Calendar.vue'
 
@@ -113,10 +113,6 @@ const routes: RouteRecordRaw[] = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/vulns',
-    redirect: '/issues'
-  },
-  {
     path: '/issues',
     name: 'Issues',
     component: Issues,
@@ -159,9 +155,9 @@ const routes: RouteRecordRaw[] = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/project/:projectId/assignments',
-    name: 'Assignments',
-    component: Assignments,
+    path: '/issues/:issueId',
+    name: 'IssueDetail',
+    component: IssueDetail,
     meta: { requiresAuth: true }
   },
   {

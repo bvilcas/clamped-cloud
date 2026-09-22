@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.user;
+package io.clamped.cloud.user;
 
 import io.clamped.cloud.authentication.AuthenticationResponse;
 import io.clamped.cloud.backendconfig.ApiResponse;

@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.event;
+package io.clamped.cloud.event;
 
 import io.clamped.cloud.issue.Severity;
 import jakarta.validation.constraints.NotBlank;
@@ -18,5 +18,9 @@ public record IngestEventRequest(
         String stacktrace,
         String sourceFile,
         Integer sourceLine,
-        String sourceMethod
+        String sourceMethod,
+        String appName,
+        String host,
+        String eventType,
+        String extra
 ) {}

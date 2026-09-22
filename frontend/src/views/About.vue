@@ -2,17 +2,17 @@
 </script>
 
 <template>
-  <v-container class="pa-8">
+  <v-container fluid class="pa-8">
     <h1 class="text-info mb-4">About Clamped!</h1>
     <p class="mb-8">
-      Clamped! is a secure vulnerability tracking system built to help small teams
-      and organizations manage, report, and resolve software vulnerabilities.
+      Clamped! is a secure issue tracking system built to help small teams
+      and organizations manage, report, and resolve software issues.
     </p>
 
     <v-card variant="elevated" elevation="2" class="about-card">
       <h2 class="card-title">Mission</h2>
       <p class="text-body-1">
-        Our goal is to make vulnerability tracking accessible and reliable,
+        Our goal is to make issue tracking accessible and reliable,
         combining modern security with a user-friendly dashboard.
         Clamped! is designed with defense, compliance, and collaboration in mind.
       </p>
@@ -21,7 +21,7 @@
     <v-card variant="elevated" elevation="2" class="about-card">
       <h2 class="card-title">Features</h2>
       <ul class="features-list">
-        <li>Report vulnerabilities and assign them to team members.</li>
+        <li>Report issues and assign them to team members.</li>
         <li>Track status, severity, and deadlines for every issue.</li>
         <li>Role-based workflows for reporters, assignees, and verifiers.</li>
         <li>Filtered refresh token rotation with JSESSIONID cookie support for continuous access.</li>

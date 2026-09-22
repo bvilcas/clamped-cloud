@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.notification;
+package io.clamped.cloud.notification;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

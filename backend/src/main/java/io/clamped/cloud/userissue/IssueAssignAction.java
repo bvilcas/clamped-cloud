@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.userissue;
+package io.clamped.cloud.userissue;
 
 import jakarta.validation.constraints.NotNull;
 

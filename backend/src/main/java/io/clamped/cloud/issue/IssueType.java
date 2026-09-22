@@ -1,7 +1,7 @@
-﻿package io.clamped.cloud.issue;
+package io.clamped.cloud.issue;
 
 public enum IssueType {
-    SECURITY,       // CWE/CVE applicable
+    SECURITY,       // Auth, data exposure, dependency risk
     RELIABILITY,    // Service crashes, timeouts, data loss
     PERFORMANCE,    // Regressions, SLA violations
     UX,             // User-facing defects, accessibility

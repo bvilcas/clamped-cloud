@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.issue;
+package io.clamped.cloud.issue;
 
 import io.clamped.cloud.event.EventGroup;
 import io.clamped.cloud.event.EventGroupRepository;
@@ -11,7 +11,6 @@ import io.clamped.cloud.user.UserPrincipal;
 import io.clamped.cloud.user.UserRepository;
 import io.clamped.cloud.userissue.RoleInIssue;
 import io.clamped.cloud.userissue.UserIssue;
-import io.clamped.cloud.userissue.UserIssueId;
 import io.clamped.cloud.userissue.UserIssueRepository;
 import io.clamped.cloud.userproject.ProjectRole;
 import io.clamped.cloud.userproject.UserProject;
@@ -73,8 +72,6 @@ public class IssueService {
                 .title(request.title())
                 .description(request.description())
                 .type(request.type() != null ? request.type() : IssueType.OTHER)
-                .cveId(request.cveId())
-                .cweId(request.cweId())
                 .severity(request.severity())
                 .status(request.status())
                 .updatedAt(null)
@@ -91,7 +88,6 @@ public class IssueService {
         Issue saved = issueRepository.save(issue);
 
         UserIssue link = UserIssue.builder()
-                .id(new UserIssueId(user.getId(), saved.getId()))
                 .user(user)
                 .issue(saved)
                 .role(RoleInIssue.REPORTER)
@@ -129,8 +125,6 @@ public class IssueService {
         if (request.title() != null && !request.title().isBlank()) issue.setTitle(request.title());
         if (request.description() != null) issue.setDescription(request.description());
         if (request.type() != null) issue.setType(request.type());
-        if (request.cveId() != null) issue.setCveId(request.cveId());
-        if (request.cweId() != null) issue.setCweId(request.cweId());
         if (request.severity() != null) issue.setSeverity(request.severity());
         if (request.dueAt() != null) issue.setDueAt(request.dueAt());
         if (request.repository() != null) issue.setRepository(request.repository());
@@ -167,7 +161,7 @@ public class IssueService {
                 .map(UserProject::getRole)
                 .orElseThrow(() -> new AccessDeniedException("User not in this project"));
 
-        RoleInIssue roleInIssue = userIssueRepository.findByUserIdAndIssueId(userId, issue.getId())
+        RoleInIssue roleInIssue = userIssueRepository.findByUserIdAndIssueIdAndRevokedAtIsNull(userId, issue.getId())
                 .map(UserIssue::getRole)
                 .orElse(null);
 
@@ -238,7 +232,12 @@ public class IssueService {
                 .description(description)
                 .type(IssueType.OTHER)
                 .status(IssueStatus.REPORTED)
+                .severity(group.getSeverity())
                 .reportedAt(Instant.now())
+                .eventApp(group.getAppName())
+                .eventHost(group.getHost())
+                .eventType(group.getEventType())
+                .eventExtra(group.getExtra())
                 .project(group.getProject())
                 .build();
 
@@ -254,14 +253,12 @@ public class IssueService {
                                         IssueStatus current, IssueStatus target) {
         if (projectRole == ProjectRole.LEAD) return true;
 
-        if (projectRole == ProjectRole.PROGRAMMER) {
-            if (roleInIssue != RoleInIssue.ASSIGNEE) return false;
+        if (roleInIssue == RoleInIssue.ASSIGNEE) {
             return (current == IssueStatus.REPORTED && target == IssueStatus.IN_PROGRESS) ||
                     (current == IssueStatus.IN_PROGRESS && target == IssueStatus.PATCHED);
         }
 
-        if (projectRole == ProjectRole.TESTER) {
-            if (roleInIssue != RoleInIssue.VERIFIER) return false;
+        if (roleInIssue == RoleInIssue.VERIFIER) {
             return (current == IssueStatus.PATCHED && target == IssueStatus.UNDER_REVIEW) ||
                     (current == IssueStatus.UNDER_REVIEW && target == IssueStatus.VERIFIED);
         }

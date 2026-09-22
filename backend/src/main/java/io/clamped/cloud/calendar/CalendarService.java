@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.calendar;
+package io.clamped.cloud.calendar;
 
 import io.clamped.cloud.issue.Issue;
 import io.clamped.cloud.issue.IssueRepository;
@@ -32,7 +32,7 @@ public class CalendarService {
     }
 
     @Transactional(readOnly = true)
-    public List<CalendarVulnDto> getCalendarVulns(Authentication authentication) {
+    public List<CalendarIssueDto> getCalendarIssues(Authentication authentication) {
         UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
         Long userId = principal.getId();
 
@@ -48,7 +48,7 @@ public class CalendarService {
                         .filter(i -> i.getDueAt() != null)
                         .forEach(i -> seen.putIfAbsent(i.getId(), i));
             } else {
-                userIssueRepository.findByUserId(userId).stream()
+                userIssueRepository.findByUserIdAndRevokedAtIsNull(userId).stream()
                         .map(UserIssue::getIssue)
                         .filter(i -> i.getProject().getId().equals(projectId) && i.getDueAt() != null)
                         .forEach(i -> seen.putIfAbsent(i.getId(), i));
@@ -56,7 +56,7 @@ public class CalendarService {
         }
 
         return seen.values().stream()
-                .map(i -> new CalendarVulnDto(
+                .map(i -> new CalendarIssueDto(
                         i.getId(),
                         i.getTitle(),
                         i.getSeverity(),

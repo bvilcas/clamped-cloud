@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.contact;
+package io.clamped.cloud.contact;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

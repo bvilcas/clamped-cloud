@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.event;
+package io.clamped.cloud.event;
 
 import io.clamped.cloud.issue.Issue;
 import io.clamped.cloud.issue.Severity;
@@ -68,6 +68,18 @@ public class EventGroup {
 
     @Column(length = 255)
     private String sourceMethod;
+
+    @Column(length = 255)
+    private String appName;
+
+    @Column(length = 255)
+    private String host;
+
+    @Column(length = 50)
+    private String eventType;
+
+    @Column(length = 2000)
+    private String extra;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id", nullable = false)

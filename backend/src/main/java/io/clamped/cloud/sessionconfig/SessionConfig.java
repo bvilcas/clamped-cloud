@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.sessionconfig;
+package io.clamped.cloud.sessionconfig;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.session.jdbc.config.annotation.web.http.EnableJdbcHttpSession;

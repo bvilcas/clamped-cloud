@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.issue;
+package io.clamped.cloud.issue;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -7,8 +7,6 @@ public record IssueUpdateRequest(
         String title,
         String description,
         IssueType type,
-        String cveId,
-        String cweId,
         Severity severity,
         Instant dueAt,
         String repository,

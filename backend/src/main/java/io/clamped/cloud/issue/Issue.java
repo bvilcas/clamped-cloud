@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.issue;
+package io.clamped.cloud.issue;
 
 import io.clamped.cloud.project.Project;
 import io.clamped.cloud.userissue.UserIssue;
@@ -40,10 +40,6 @@ public class Issue {
     @Builder.Default
     private IssueType type = IssueType.OTHER;
 
-    // Security context (optional — relevant when type = SECURITY)
-    private String cveId;
-    private String cweId;
-
     @Enumerated(EnumType.STRING)
     private Severity severity;
 
@@ -65,6 +61,13 @@ public class Issue {
     @Column(length = 500)
     private String evidenceNote;
 
+    // Populated only when this issue was promoted from an EventGroup (see IssueService.createFromEventGroup)
+    private String eventApp;
+    private String eventHost;
+    private String eventType;
+    @Column(length = 2000)
+    private String eventExtra;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id", nullable = false)
     @JsonIgnore
@@ -75,15 +78,13 @@ public class Issue {
     private Set<UserIssue> userIssues = new HashSet<>();
 
     // Seeding constructor (no id)
-    public Issue(String title, String description, IssueType type, String cveId, String cweId,
+    public Issue(String title, String description, IssueType type,
                  Severity severity, IssueStatus status, Instant updatedAt, Instant reportedAt,
                  Instant dueAt, Instant patchedAt, Instant verifiedAt,
                  String repository, String commitHash, Project project) {
         this.title = title;
         this.description = description;
         this.type = type != null ? type : IssueType.OTHER;
-        this.cveId = cveId;
-        this.cweId = cweId;
         this.severity = severity;
         this.status = status;
         this.updatedAt = updatedAt;

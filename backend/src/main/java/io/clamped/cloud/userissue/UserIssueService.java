@@ -1,10 +1,9 @@
-﻿package io.clamped.cloud.userissue;
+package io.clamped.cloud.userissue;
 
 import io.clamped.cloud.issue.*;
 import io.clamped.cloud.notification.NotificationService;
 import io.clamped.cloud.notification.NotificationType;
 import io.clamped.cloud.userproject.ProjectRole;
-import io.clamped.cloud.userproject.ProjectSecurity;
 import io.clamped.cloud.userproject.UserProject;
 import io.clamped.cloud.userproject.UserProjectRepository;
 import io.clamped.cloud.user.User;
@@ -30,18 +29,16 @@ public class UserIssueService {
     private final UserIssueRepository userIssueRepository;
     private final UserRepository userRepository;
     private final IssueRepository issueRepository;
-    private final ProjectSecurity projectSecurity;
     private final UserProjectRepository userProjectRepository;
     private final NotificationService notificationService;
 
     @Autowired
     public UserIssueService(UserIssueRepository userIssueRepository, UserRepository userRepository,
-                            IssueRepository issueRepository, ProjectSecurity projectSecurity,
+                            IssueRepository issueRepository,
                             UserProjectRepository userProjectRepository, NotificationService notificationService) {
         this.userIssueRepository = userIssueRepository;
         this.userRepository = userRepository;
         this.issueRepository = issueRepository;
-        this.projectSecurity = projectSecurity;
         this.userProjectRepository = userProjectRepository;
         this.notificationService = notificationService;
     }
@@ -51,6 +48,22 @@ public class UserIssueService {
                 .filter(up -> up.getRole() == ProjectRole.LEAD && !up.getUser().getId().equals(excludeUserId))
                 .map(up -> up.getUser().getId())
                 .toList();
+    }
+
+    private static RoleInIssue oppositeOf(RoleInIssue role) {
+        return role == RoleInIssue.ASSIGNEE ? RoleInIssue.VERIFIER : RoleInIssue.ASSIGNEE;
+    }
+
+    // Blocks self-certification: a user who ever held the opposite of ASSIGNEE/VERIFIER
+    // on this issue - even a revoked assignment - can't take the other side of it.
+    private void assertNoRoleConflict(Long userId, Long issueId, RoleInIssue role) {
+        if (role != RoleInIssue.ASSIGNEE && role != RoleInIssue.VERIFIER) return;
+        RoleInIssue conflictingRole = oppositeOf(role);
+        if (userIssueRepository.existsByUserIdAndIssueIdAndRole(userId, issueId, conflictingRole)) {
+            throw new AccessDeniedException(
+                    "This user previously held the " + conflictingRole.name().toLowerCase()
+                            + " role on this issue and cannot be assigned as " + role.name().toLowerCase());
+        }
     }
 
     @Transactional
@@ -64,23 +77,19 @@ public class UserIssueService {
         Issue issue = issueRepository.getIssuesById(selfAssign.issueId());
 
         userProjectRepository.findByUserIdAndProjectId(user.getId(), selfAssign.projectId())
-                .map(UserProject::getRole)
                 .orElseThrow(() -> new AccessDeniedException("User is not a member of this project"));
 
-        UserIssueId id = new UserIssueId(user.getId(), issue.getId());
-        if (userIssueRepository.existsById(id)) {
-            throw new IllegalStateException("You are already assigned to this issue");
+        RoleInIssue roleInIssue = selfAssign.role();
+        if (roleInIssue != RoleInIssue.ASSIGNEE && roleInIssue != RoleInIssue.VERIFIER) {
+            throw new IllegalArgumentException("You must self-assign as either ASSIGNEE or VERIFIER");
         }
 
-        ProjectRole projectRole = projectSecurity.getProjectRole(authentication, issue.getProject().getId());
-        RoleInIssue roleInIssue = switch (projectRole) {
-            case PROGRAMMER, LEAD -> RoleInIssue.ASSIGNEE;
-            case TESTER -> RoleInIssue.VERIFIER;
-            default -> throw new AccessDeniedException("You are not allowed to self-assign to this issue");
-        };
+        if (userIssueRepository.existsByUserIdAndIssueIdAndRevokedAtIsNull(user.getId(), issue.getId())) {
+            throw new IllegalStateException("You are already assigned to this issue");
+        }
+        assertNoRoleConflict(user.getId(), issue.getId(), roleInIssue);
 
         UserIssue link = UserIssue.builder()
-                .id(new UserIssueId(user.getId(), issue.getId()))
                 .user(user)
                 .issue(issue)
                 .role(roleInIssue)
@@ -129,22 +138,23 @@ public class UserIssueService {
                 .orElseThrow(() -> new AccessDeniedException("User is not a member of this project"));
 
         UserIssue link = userIssueRepository
-                .findByUserIdAndIssueId(user.getId(), issue.getId())
+                .findByUserIdAndIssueIdAndRevokedAtIsNull(user.getId(), issue.getId())
                 .orElseThrow(() -> new IllegalStateException("You are not assigned to this issue"));
 
         RoleInIssue roleInIssue = link.getRole();
-        userIssueRepository.delete(link);
+        link.setRevokedAt(Instant.now());
+        userIssueRepository.save(link);
 
         switch (roleInIssue) {
             case ASSIGNEE -> {
-                boolean hasOtherAssignees = userIssueRepository.existsByIssueIdAndRole(selfRevoke.issueId(), RoleInIssue.ASSIGNEE);
+                boolean hasOtherAssignees = userIssueRepository.existsByIssueIdAndRoleAndRevokedAtIsNull(selfRevoke.issueId(), RoleInIssue.ASSIGNEE);
                 if (!hasOtherAssignees && issue.getStatus() == IssueStatus.IN_PROGRESS) {
                     issue.setStatus(IssueStatus.REPORTED);
                     issue.setUpdatedAt(Instant.now());
                 }
             }
             case VERIFIER -> {
-                boolean hasOtherVerifiers = userIssueRepository.existsByIssueIdAndRole(selfRevoke.issueId(), RoleInIssue.VERIFIER);
+                boolean hasOtherVerifiers = userIssueRepository.existsByIssueIdAndRoleAndRevokedAtIsNull(selfRevoke.issueId(), RoleInIssue.VERIFIER);
                 if (!hasOtherVerifiers && issue.getStatus() == IssueStatus.UNDER_REVIEW) {
                     issue.setStatus(IssueStatus.PATCHED);
                     issue.setUpdatedAt(Instant.now());
@@ -171,42 +181,27 @@ public class UserIssueService {
 
         Long projectId = issue.getProject().getId();
 
-        ProjectRole projectRole = userProjectRepository
+        userProjectRepository
                 .findByUserIdAndProjectId(user.getId(), projectId)
-                .map(UserProject::getRole)
                 .orElseThrow(() -> new AccessDeniedException("User is not a member of this project"));
 
-        RoleInIssue vulnRole = action.role();
+        RoleInIssue issueRole = action.role();
 
-        UserIssueId id = new UserIssueId(user.getId(), issue.getId());
-        if (userIssueRepository.existsById(id)) {
+        if (userIssueRepository.existsByUserIdAndIssueIdAndRevokedAtIsNull(user.getId(), issue.getId())) {
             throw new IllegalStateException("User is already assigned to this issue");
         }
-
-        switch (projectRole) {
-            case PROGRAMMER -> {
-                if (vulnRole != RoleInIssue.ASSIGNEE)
-                    throw new IllegalArgumentException("Programmers can only be assigned as ASSIGNEE");
-            }
-            case TESTER -> {
-                if (vulnRole != RoleInIssue.VERIFIER)
-                    throw new IllegalArgumentException("Testers can only be assigned as VERIFIER");
-            }
-            case LEAD -> { /* Leads can take any role */ }
-            default -> throw new AccessDeniedException("Unknown project role");
-        }
+        assertNoRoleConflict(user.getId(), issue.getId(), issueRole);
 
         UserIssue link = UserIssue.builder()
-                .id(id)
                 .user(user)
                 .issue(issue)
-                .role(vulnRole)
+                .role(issueRole)
                 .assignedAt(Instant.now())
                 .build();
 
         userIssueRepository.save(link);
 
-        switch (vulnRole) {
+        switch (issueRole) {
             case ASSIGNEE -> {
                 if (issue.getStatus() == IssueStatus.REPORTED) {
                     issue.setStatus(IssueStatus.IN_PROGRESS);
@@ -224,7 +219,7 @@ public class UserIssueService {
 
         notificationService.notify(
                 user.getId(), NotificationType.ISSUE_ASSIGNED,
-                "You were assigned as " + vulnRole.name().toLowerCase() + " to '" + issue.getTitle() + "' in '" + issue.getProject().getName() + "'",
+                "You were assigned as " + issueRole.name().toLowerCase() + " to '" + issue.getTitle() + "' in '" + issue.getProject().getName() + "'",
                 projectId, issue.getId()
         );
         return user;
@@ -238,21 +233,22 @@ public class UserIssueService {
         User user = userRepository.findById(action.userId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        UserIssue link = userIssueRepository.findByUserIdAndIssueId(action.userId(), action.issueId())
+        UserIssue link = userIssueRepository.findByUserIdAndIssueIdAndRevokedAtIsNull(action.userId(), action.issueId())
                 .orElseThrow(() -> new EntityNotFoundException("User is not assigned to this issue"));
 
         RoleInIssue role = link.getRole();
-        userIssueRepository.delete(link);
+        link.setRevokedAt(Instant.now());
+        userIssueRepository.save(link);
 
         if (role == RoleInIssue.ASSIGNEE) {
-            boolean hasOtherAssignees = userIssueRepository.existsByIssueIdAndRole(action.issueId(), RoleInIssue.ASSIGNEE);
+            boolean hasOtherAssignees = userIssueRepository.existsByIssueIdAndRoleAndRevokedAtIsNull(action.issueId(), RoleInIssue.ASSIGNEE);
             if (!hasOtherAssignees && issue.getStatus() == IssueStatus.IN_PROGRESS) {
                 issue.setStatus(IssueStatus.REPORTED);
             }
         }
 
         if (role == RoleInIssue.VERIFIER) {
-            boolean hasOtherVerifiers = userIssueRepository.existsByIssueIdAndRole(action.issueId(), RoleInIssue.VERIFIER);
+            boolean hasOtherVerifiers = userIssueRepository.existsByIssueIdAndRoleAndRevokedAtIsNull(action.issueId(), RoleInIssue.VERIFIER);
             if (!hasOtherVerifiers && issue.getStatus() == IssueStatus.UNDER_REVIEW) {
                 issue.setStatus(IssueStatus.PATCHED);
             }
@@ -270,9 +266,10 @@ public class UserIssueService {
     private IssueWithProjectDto toDto(Issue i) {
         return new IssueWithProjectDto(
                 i.getId(), i.getTitle(), i.getDescription(), i.getType(),
-                i.getCveId(), i.getCweId(), i.getSeverity(), i.getStatus(),
+                i.getSeverity(), i.getStatus(),
                 i.getUpdatedAt(), i.getReportedAt(), i.getDueAt(),
                 i.getPatchedAt(), i.getVerifiedAt(), i.getRepository(), i.getCommitHash(),
+                i.getEventApp(), i.getEventHost(), i.getEventType(), i.getEventExtra(),
                 i.getProject().getId(), i.getProject().getName()
         );
     }
@@ -280,14 +277,14 @@ public class UserIssueService {
     public List<IssueWithProjectDto> getReportedByMe(Authentication authentication) {
         Long userId = ((UserPrincipal) authentication.getPrincipal()).getId();
         userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        return userIssueRepository.findByUserIdAndRole(userId, RoleInIssue.REPORTER).stream()
+        return userIssueRepository.findByUserIdAndRoleAndRevokedAtIsNull(userId, RoleInIssue.REPORTER).stream()
                 .map(ui -> toDto(ui.getIssue())).collect(Collectors.toList());
     }
 
     public List<Issue> getReportedByMeInProject(Long projectId, Authentication authentication) {
         Long userId = ((UserPrincipal) authentication.getPrincipal()).getId();
         userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        return userIssueRepository.findByUserIdAndRole(userId, RoleInIssue.REPORTER).stream()
+        return userIssueRepository.findByUserIdAndRoleAndRevokedAtIsNull(userId, RoleInIssue.REPORTER).stream()
                 .map(UserIssue::getIssue)
                 .filter(i -> i.getProject().getId().equals(projectId))
                 .collect(Collectors.toList());
@@ -297,14 +294,14 @@ public class UserIssueService {
     public List<IssueWithProjectDto> getAssignedToMe(Authentication authentication) {
         Long userId = ((UserPrincipal) authentication.getPrincipal()).getId();
         userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        return userIssueRepository.findByUserIdAndRole(userId, RoleInIssue.ASSIGNEE).stream()
+        return userIssueRepository.findByUserIdAndRoleAndRevokedAtIsNull(userId, RoleInIssue.ASSIGNEE).stream()
                 .map(ui -> toDto(ui.getIssue())).toList();
     }
 
     public List<Issue> getAssignedToMeInProject(Long projectId, Authentication authentication) {
         Long userId = ((UserPrincipal) authentication.getPrincipal()).getId();
         userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        return userIssueRepository.findByUserIdAndRole(userId, RoleInIssue.ASSIGNEE).stream()
+        return userIssueRepository.findByUserIdAndRoleAndRevokedAtIsNull(userId, RoleInIssue.ASSIGNEE).stream()
                 .map(UserIssue::getIssue)
                 .filter(i -> i.getProject().getId().equals(projectId))
                 .collect(Collectors.toList());
@@ -314,14 +311,14 @@ public class UserIssueService {
     public List<IssueWithProjectDto> getVerifiedByMe(Authentication authentication) {
         Long userId = ((UserPrincipal) authentication.getPrincipal()).getId();
         userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        return userIssueRepository.findByUserIdAndRole(userId, RoleInIssue.VERIFIER).stream()
+        return userIssueRepository.findByUserIdAndRoleAndRevokedAtIsNull(userId, RoleInIssue.VERIFIER).stream()
                 .map(ui -> toDto(ui.getIssue())).toList();
     }
 
     public List<Issue> getVerifiedByMeInProject(Long projectId, Authentication authentication) {
         Long userId = ((UserPrincipal) authentication.getPrincipal()).getId();
         userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        return userIssueRepository.findByUserIdAndRole(userId, RoleInIssue.VERIFIER).stream()
+        return userIssueRepository.findByUserIdAndRoleAndRevokedAtIsNull(userId, RoleInIssue.VERIFIER).stream()
                 .map(UserIssue::getIssue)
                 .filter(i -> i.getProject().getId().equals(projectId))
                 .collect(Collectors.toList());
@@ -329,7 +326,7 @@ public class UserIssueService {
 
     public List<Issue> getReportedByUserInProject(UserProjectRelationshipRequest request) {
         userRepository.findById(request.userId()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        return userIssueRepository.findByUserIdAndRole(request.userId(), RoleInIssue.REPORTER).stream()
+        return userIssueRepository.findByUserIdAndRoleAndRevokedAtIsNull(request.userId(), RoleInIssue.REPORTER).stream()
                 .map(UserIssue::getIssue)
                 .filter(i -> i.getProject().getId().equals(request.projectId()))
                 .collect(Collectors.toList());
@@ -337,7 +334,7 @@ public class UserIssueService {
 
     public List<Issue> getAssignedToUserInProject(UserProjectRelationshipRequest request) {
         userRepository.findById(request.userId()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        return userIssueRepository.findByUserIdAndRole(request.userId(), RoleInIssue.ASSIGNEE).stream()
+        return userIssueRepository.findByUserIdAndRoleAndRevokedAtIsNull(request.userId(), RoleInIssue.ASSIGNEE).stream()
                 .map(UserIssue::getIssue)
                 .filter(i -> i.getProject().getId().equals(request.projectId()))
                 .collect(Collectors.toList());
@@ -345,7 +342,7 @@ public class UserIssueService {
 
     public List<Issue> getVerifiedByUserInProject(UserProjectRelationshipRequest request) {
         userRepository.findById(request.userId()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        return userIssueRepository.findByUserIdAndRole(request.userId(), RoleInIssue.VERIFIER).stream()
+        return userIssueRepository.findByUserIdAndRoleAndRevokedAtIsNull(request.userId(), RoleInIssue.VERIFIER).stream()
                 .map(UserIssue::getIssue)
                 .filter(i -> i.getProject().getId().equals(request.projectId()))
                 .collect(Collectors.toList());
@@ -373,9 +370,11 @@ public class UserIssueService {
                             .collect(Collectors.toList());
                     return new IssueAssignmentDto(
                             i.getId(), i.getTitle(), i.getDescription(), i.getType(),
-                            i.getCveId(), i.getCweId(), i.getSeverity(), i.getStatus(),
+                            i.getSeverity(), i.getStatus(),
                             i.getReportedAt(), i.getDueAt(), i.getPatchedAt(), i.getVerifiedAt(),
-                            i.getRepository(), i.getCommitHash(), assignments
+                            i.getRepository(), i.getCommitHash(),
+                            i.getEventApp(), i.getEventHost(), i.getEventType(), i.getEventExtra(),
+                            assignments
                     );
                 })
                 .collect(Collectors.toList());

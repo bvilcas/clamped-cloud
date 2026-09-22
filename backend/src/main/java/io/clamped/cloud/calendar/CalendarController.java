@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.calendar;
+package io.clamped.cloud.calendar;
 
 import io.clamped.cloud.backendconfig.ApiResponse;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +19,9 @@ public class CalendarController {
         this.calendarService = calendarService;
     }
 
-    @GetMapping("/vulns")
-    public ResponseEntity<ApiResponse> getCalendarVulns(Authentication authentication) {
-        List<CalendarVulnDto> vulns = calendarService.getCalendarVulns(authentication);
-        return ResponseEntity.ok(new ApiResponse(true, "Calendar vulnerabilities fetched", vulns));
+    @GetMapping("/issues")
+    public ResponseEntity<ApiResponse> getCalendarIssues(Authentication authentication) {
+        List<CalendarIssueDto> issues = calendarService.getCalendarIssues(authentication);
+        return ResponseEntity.ok(new ApiResponse(true, "Calendar issues fetched", issues));
     }
 }

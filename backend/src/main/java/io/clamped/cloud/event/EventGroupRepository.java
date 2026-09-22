@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.event;
+package io.clamped.cloud.event;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

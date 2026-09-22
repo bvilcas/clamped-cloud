@@ -106,7 +106,7 @@ const defaultPageItems = [
 </script>
 
 <template>
-  <v-container class="pa-8">
+  <v-container fluid class="pa-8">
     <h1 class="text-info mb-6">Settings</h1>
 
     <!-- Email Notifications -->

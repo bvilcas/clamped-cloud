@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.notification;
+package io.clamped.cloud.notification;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

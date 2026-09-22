@@ -12,7 +12,7 @@ interface NotificationItem {
   type: string
   message: string
   relatedProjectId: number | null
-  relatedVulnId: number | null
+  relatedIssueId: number | null
   read: boolean
   createdAt: string
 }
@@ -29,12 +29,12 @@ const notifLoading = ref(false)
 
 const notifTypeIcon = (type: string) => {
   const map: Record<string, string> = {
-    VULN_ASSIGNED:       'mdi-shield-check-outline',
-    VULN_UNASSIGNED:     'mdi-shield-remove-outline',
-    VULN_REPORTED:       'mdi-shield-alert-outline',
-    VULN_STATUS_CHANGED: 'mdi-shield-refresh-outline',
-    MEMBER_SELF_ASSIGNED:'mdi-account-check-outline',
-    MEMBER_SELF_REVOKED: 'mdi-account-minus-outline',
+    ISSUE_ASSIGNED:       'mdi-shield-check-outline',
+    ISSUE_UNASSIGNED:     'mdi-shield-remove-outline',
+    ISSUE_REPORTED:       'mdi-shield-alert-outline',
+    ISSUE_STATUS_CHANGED: 'mdi-shield-refresh-outline',
+    ISSUE_SELF_ASSIGNED:'mdi-account-check-outline',
+    ISSUE_SELF_REVOKED: 'mdi-account-minus-outline',
     PROJECT_ADDED:       'mdi-folder-plus-outline',
     PROJECT_REMOVED:     'mdi-folder-remove-outline',
   }
@@ -42,8 +42,8 @@ const notifTypeIcon = (type: string) => {
 }
 
 const notifTypeColor = (type: string) => {
-  if (type.startsWith('VULN_REPORT')) return 'warning'
-  if (type.startsWith('VULN_ASSIGN') || type === 'MEMBER_SELF_ASSIGNED') return 'success'
+  if (type.startsWith('ISSUE_REPORT')) return 'warning'
+  if (type.startsWith('ISSUE_ASSIGN') || type === 'ISSUE_SELF_ASSIGNED') return 'success'
   if (type.includes('UNASSIGN') || type.includes('REVOK') || type === 'PROJECT_REMOVED') return 'error'
   if (type === 'PROJECT_ADDED') return 'info'
   return 'secondary'
@@ -158,7 +158,7 @@ const positionDropdown = () => {
 
 // Cached dynamic data (loaded once on first open)
 const projects = ref<{ id: string; name: string; description: string; myRole: string }[]>([])
-const vulns = ref<{ id: string; title: string; severity: string; status: string; projectId: string; projectName: string }[]>([])
+const issues = ref<{ id: string; title: string; severity: string; status: string; projectId: string; projectName: string }[]>([])
 const dataLoaded = ref(false)
 
 // ── Static page shortcuts ─────────────────────────────────────
@@ -166,7 +166,7 @@ const pages = [
   { key: 'dashboard',      icon: 'mdi-view-dashboard-outline', title: 'Dashboard',           subtitle: 'Home overview',                 path: '/dashboard' },
   { key: 'projects',       icon: 'mdi-folder-outline',         title: 'Projects',             subtitle: 'All your projects',             path: '/projects' },
   { key: 'create-project', icon: 'mdi-folder-plus-outline',    title: 'Create Project',       subtitle: 'Start a new project',           path: '/projects/create' },
-  { key: 'vulns',          icon: 'mdi-shield-alert-outline',   title: 'My Vulnerabilities',   subtitle: 'Reported, assigned & verified', path: '/vulns' },
+  { key: 'issues',          icon: 'mdi-shield-alert-outline',   title: 'My Issues',   subtitle: 'Reported, assigned & verified', path: '/issues' },
   { key: 'messages',       icon: 'mdi-message-outline',        title: 'Messages',             subtitle: 'Project channels',              path: '/messages' },
   { key: 'team',           icon: 'mdi-account-group-outline',  title: 'Team',                 subtitle: 'Members across all projects',   path: '/team' },
   { key: 'profile',        icon: 'mdi-account-outline',        title: 'Profile',              subtitle: 'Your profile settings',         path: '/profile' },
@@ -183,22 +183,22 @@ const loadData = async () => {
   try {
     const [projRes, repRes, asgRes, verRes] = await Promise.all([
       fetchWithAuth('/api/v1/userprojects/all'),
-      fetchWithAuth('/api/v1/uservulns/reported'),
-      fetchWithAuth('/api/v1/uservulns/assigned'),
-      fetchWithAuth('/api/v1/uservulns/verified'),
+      fetchWithAuth('/api/v1/userissues/reported'),
+      fetchWithAuth('/api/v1/userissues/assigned'),
+      fetchWithAuth('/api/v1/userissues/verified'),
     ])
     if (projRes.ok) {
       const d = await projRes.json()
       projects.value = d.data || []
     }
-    const vulnMap = new Map()
+    const issueMap = new Map()
     const absorb = async (res: Response) => {
       if (!res.ok) return
       const d = await res.json()
-      for (const v of d.data || []) vulnMap.set(v.id, v)
+      for (const v of d.data || []) issueMap.set(v.id, v)
     }
     await Promise.all([absorb(repRes), absorb(asgRes), absorb(verRes)])
-    vulns.value = Array.from(vulnMap.values())
+    issues.value = Array.from(issueMap.values())
     dataLoaded.value = true
   } catch {
     // fail silently — static items still work
@@ -252,18 +252,18 @@ const filteredGroups = computed<ResultGroup[]>(() => {
       title: p.name,
       subtitle: p.description || 'No description',
       badge: p.myRole,
-      badgeColor: p.myRole === 'LEAD' ? 'warning' : p.myRole === 'PROGRAMMER' ? 'info' : 'secondary',
+      badgeColor: p.myRole === 'LEAD' ? 'warning' : 'info',
       navigate: () => go(`/project/${p.id}`),
     }))
   if (matchedProjects.length) groups.push({ label: 'Projects', items: matchedProjects })
 
-  if (q && vulns.value.length) {
+  if (q && issues.value.length) {
     const sevColor: Record<string, string> = { LOW: 'success', MEDIUM: 'warning', HIGH: 'error', CRITICAL: 'error' }
-    const matchedVulns = vulns.value
+    const matchedIssues = issues.value
       .filter(v => v.title.toLowerCase().includes(q) || v.projectName?.toLowerCase().includes(q))
       .slice(0, 4)
       .map(v => ({
-        key: `vuln-${v.id}`,
+        key: `issue-${v.id}`,
         icon: 'mdi-shield-bug-outline',
         iconColor: sevColor[v.severity] ?? 'secondary',
         title: v.title,
@@ -272,7 +272,7 @@ const filteredGroups = computed<ResultGroup[]>(() => {
         badgeColor: sevColor[v.severity] ?? 'secondary',
         navigate: () => go(`/project/${v.projectId}`),
       }))
-    if (matchedVulns.length) groups.push({ label: 'Vulnerabilities', items: matchedVulns })
+    if (matchedIssues.length) groups.push({ label: 'Issues', items: matchedIssues })
   }
 
   return groups
@@ -380,7 +380,7 @@ const highlight = (text: string) => {
           variant="outlined"
           density="compact"
           hide-details
-          placeholder="Search pages, projects, vulns..."
+          placeholder="Search pages, projects, issues..."
           class="topbar-search"
           prepend-inner-icon="mdi-magnify"
           :loading="searchLoading"

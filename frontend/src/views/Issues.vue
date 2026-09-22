@@ -48,8 +48,16 @@ onMounted(async () => {
                 <div><strong>Severity:</strong> {{ v.severity }}</div>
                 <div><strong>Status:</strong> {{ v.status }}</div>
                 <div v-if="v.dueAt"><strong>Due:</strong> {{ new Date(v.dueAt).toLocaleDateString() }}</div>
-                <div v-if="v.cveId"><strong>CVE:</strong> {{ v.cveId }}</div>
-                <div v-if="v.cweId"><strong>CWE:</strong> {{ v.cweId }}</div>
+              </div>
+              <div
+                v-if="v.eventApp || v.eventHost || v.eventType || v.eventExtra"
+                class="event-info mt-2 pt-2"
+              >
+                <div class="event-info-label">Event Info</div>
+                <div v-if="v.eventApp"><strong>App:</strong> {{ v.eventApp }}</div>
+                <div v-if="v.eventHost"><strong>Host:</strong> {{ v.eventHost }}</div>
+                <div v-if="v.eventType"><strong>Type:</strong> {{ v.eventType }}</div>
+                <div v-if="v.eventExtra"><strong>Extra:</strong> {{ v.eventExtra }}</div>
               </div>
             </v-card-text>
           </v-card>
@@ -72,8 +80,16 @@ onMounted(async () => {
                 <div><strong>Severity:</strong> {{ v.severity }}</div>
                 <div><strong>Status:</strong> {{ v.status }}</div>
                 <div v-if="v.dueAt"><strong>Due:</strong> {{ new Date(v.dueAt).toLocaleDateString() }}</div>
-                <div v-if="v.cveId"><strong>CVE:</strong> {{ v.cveId }}</div>
-                <div v-if="v.cweId"><strong>CWE:</strong> {{ v.cweId }}</div>
+              </div>
+              <div
+                v-if="v.eventApp || v.eventHost || v.eventType || v.eventExtra"
+                class="event-info mt-2 pt-2"
+              >
+                <div class="event-info-label">Event Info</div>
+                <div v-if="v.eventApp"><strong>App:</strong> {{ v.eventApp }}</div>
+                <div v-if="v.eventHost"><strong>Host:</strong> {{ v.eventHost }}</div>
+                <div v-if="v.eventType"><strong>Type:</strong> {{ v.eventType }}</div>
+                <div v-if="v.eventExtra"><strong>Extra:</strong> {{ v.eventExtra }}</div>
               </div>
             </v-card-text>
           </v-card>
@@ -96,8 +112,16 @@ onMounted(async () => {
                 <div><strong>Severity:</strong> {{ v.severity }}</div>
                 <div><strong>Status:</strong> {{ v.status }}</div>
                 <div v-if="v.dueAt"><strong>Due:</strong> {{ new Date(v.dueAt).toLocaleDateString() }}</div>
-                <div v-if="v.cveId"><strong>CVE:</strong> {{ v.cveId }}</div>
-                <div v-if="v.cweId"><strong>CWE:</strong> {{ v.cweId }}</div>
+              </div>
+              <div
+                v-if="v.eventApp || v.eventHost || v.eventType || v.eventExtra"
+                class="event-info mt-2 pt-2"
+              >
+                <div class="event-info-label">Event Info</div>
+                <div v-if="v.eventApp"><strong>App:</strong> {{ v.eventApp }}</div>
+                <div v-if="v.eventHost"><strong>Host:</strong> {{ v.eventHost }}</div>
+                <div v-if="v.eventType"><strong>Type:</strong> {{ v.eventType }}</div>
+                <div v-if="v.eventExtra"><strong>Extra:</strong> {{ v.eventExtra }}</div>
               </div>
             </v-card-text>
           </v-card>
@@ -130,5 +154,19 @@ onMounted(async () => {
   line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.event-info {
+  border-top: 1px solid rgba(var(--v-theme-on-surface), 0.08);
+  font-size: 0.75rem;
+}
+
+.event-info-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgb(var(--v-theme-on-surface-variant));
+  margin-bottom: 2px;
 }
 </style>

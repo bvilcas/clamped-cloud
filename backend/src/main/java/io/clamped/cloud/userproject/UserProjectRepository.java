@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.userproject;
+package io.clamped.cloud.userproject;
 
 import aj.org.objectweb.asm.commons.Remapper;
 import io.clamped.cloud.project.Project;

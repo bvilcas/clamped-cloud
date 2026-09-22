@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.message;
+package io.clamped.cloud.message;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

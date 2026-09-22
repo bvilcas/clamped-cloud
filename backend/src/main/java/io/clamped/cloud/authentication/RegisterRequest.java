@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.authentication;
+package io.clamped.cloud.authentication;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

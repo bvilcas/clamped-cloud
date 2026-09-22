@@ -26,8 +26,6 @@ const form = reactive({
   title: '',
   description: '',
   issueType: '',
-  cveId: '',
-  cweId: '',
   severity: '',
   status: '',
   dueAt: '',
@@ -40,22 +38,6 @@ const form = reactive({
 
 const error = ref('')
 const success = ref('')
-
-// CVE lookup state
-const cveLoading = ref(false)
-const cveError = ref('')
-interface CveInfo {
-  description: string | null
-  cvssScore: number | null
-  cvssVector: string | null
-  severity: string | null
-  cweId: string | null
-}
-const cveInfo = ref<CveInfo | null>(null)
-
-// Security context toggle (visible when issue type is not SECURITY)
-const showSecurityContext = ref(false)
-const isSecurityType = computed(() => form.issueType === 'SECURITY')
 
 onMounted(async () => {
   if (!resolvedProjectId.value) {
@@ -74,41 +56,6 @@ onMounted(async () => {
   }
 })
 
-async function lookupCve() {
-  const id = form.cveId.trim()
-  if (!id) return
-  cveLoading.value = true
-  cveError.value = ''
-  cveInfo.value = null
-
-  try {
-    const res = await fetchWithAuth(`/api/v1/cve?id=${encodeURIComponent(id)}`)
-    const data = await res.json()
-    if (res.ok && data.success) {
-      const d = data.data
-      cveInfo.value = {
-        description: d.description,
-        cvssScore: d.cvssScore,
-        cvssVector: d.cvssVector,
-        severity: d.severity,
-        cweId: d.cweId,
-      }
-      if (!form.cweId && d.cweId) form.cweId = d.cweId
-      if (!form.severity && d.severity) {
-        const match = severityItems.find(s => s.value === d.severity.toUpperCase())
-        if (match) form.severity = match.value
-      }
-      if (!form.description && d.description) form.description = d.description
-    } else {
-      cveError.value = data.message || 'CVE not found'
-    }
-  } catch {
-    cveError.value = 'Failed to reach NVD API'
-  } finally {
-    cveLoading.value = false
-  }
-}
-
 const handleSubmit = async () => {
   error.value = ''
   success.value = ''
@@ -123,8 +70,6 @@ const handleSubmit = async () => {
       title: form.title,
       description: form.description || null,
       type: form.issueType || null,
-      cveId: form.cveId || null,
-      cweId: form.cweId || null,
       severity: form.severity,
       status: form.status,
       dueAt: form.dueAt ? new Date(form.dueAt + 'T00:00:00').toISOString() : null,
@@ -149,8 +94,6 @@ const handleSubmit = async () => {
       form.title = ''
       form.description = ''
       form.issueType = ''
-      form.cveId = ''
-      form.cweId = ''
       form.severity = ''
       form.status = ''
       form.dueAt = ''
@@ -159,9 +102,6 @@ const handleSubmit = async () => {
       form.evidenceMachineId = ''
       form.evidenceLocalId = ''
       form.evidenceNote = ''
-      cveInfo.value = null
-      cveError.value = ''
-      showSecurityContext.value = false
       if (props.onSuccess) props.onSuccess()
     } else {
       const data = await res.json()
@@ -202,15 +142,6 @@ const statusItems = [
 const projectItems = computed(() =>
   projects.value.map(p => ({ title: p.name, value: p.id }))
 )
-
-const cvssColor = computed(() => {
-  const score = cveInfo.value?.cvssScore
-  if (score === null || score === undefined) return 'grey'
-  if (score >= 9) return 'error'
-  if (score >= 7) return 'orange'
-  if (score >= 4) return 'warning'
-  return 'success'
-})
 </script>
 
 <template>
@@ -250,85 +181,6 @@ const cvssColor = computed(() => {
       density="comfortable"
       clearable
     />
-
-    <!-- Security context toggle (shown when type is not SECURITY) -->
-    <v-expand-transition>
-      <div v-if="!isSecurityType" class="mb-3">
-        <v-btn
-          variant="text"
-          size="small"
-          :prepend-icon="showSecurityContext ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-          color="secondary"
-          @click="showSecurityContext = !showSecurityContext"
-        >
-          {{ showSecurityContext ? 'Hide security context' : 'Add security context' }}
-        </v-btn>
-      </div>
-    </v-expand-transition>
-
-    <!-- CVE / CWE fields (always shown for SECURITY, toggle-controlled otherwise) -->
-    <v-expand-transition>
-      <div v-if="isSecurityType || showSecurityContext">
-        <!-- CVE ID with lookup button -->
-        <div class="d-flex gap-2 align-start mb-1">
-          <v-text-field
-            v-model="form.cveId"
-            label="CVE ID (Optional)"
-            placeholder="e.g. CVE-2021-44228"
-            variant="outlined"
-            density="comfortable"
-            hide-details
-            class="flex-grow-1"
-          />
-          <v-btn
-            variant="outlined"
-            color="info"
-            :loading="cveLoading"
-            :disabled="!form.cveId.trim()"
-            style="height: 48px; margin-top: 0"
-            @click="lookupCve"
-          >
-            Lookup
-          </v-btn>
-        </div>
-
-        <!-- CVE enrichment card -->
-        <v-expand-transition>
-          <v-card
-            v-if="cveInfo"
-            variant="tonal"
-            color="info"
-            class="mb-3 pa-3"
-            density="compact"
-          >
-            <div class="d-flex align-center justify-space-between mb-1">
-              <span class="text-caption text-medium-emphasis">NVD Data</span>
-              <v-chip v-if="cveInfo.cvssScore !== null" :color="cvssColor" size="small" label>
-                CVSS {{ cveInfo.cvssScore?.toFixed(1) }}
-              </v-chip>
-            </div>
-            <div v-if="cveInfo.description" class="text-body-2 mb-1">{{ cveInfo.description }}</div>
-            <div class="d-flex flex-wrap gap-2 mt-1">
-              <v-chip v-if="cveInfo.cweId" size="x-small" variant="outlined">{{ cveInfo.cweId }}</v-chip>
-              <v-chip v-if="cveInfo.cvssVector" size="x-small" variant="outlined" class="text-mono">
-                {{ cveInfo.cvssVector }}
-              </v-chip>
-            </div>
-          </v-card>
-        </v-expand-transition>
-
-        <v-alert v-if="cveError" type="warning" density="compact" class="mb-3" closable @click:close="cveError = ''">
-          {{ cveError }}
-        </v-alert>
-
-        <v-text-field
-          v-model="form.cweId"
-          label="CWE ID (Optional)"
-          variant="outlined"
-          density="comfortable"
-        />
-      </div>
-    </v-expand-transition>
 
     <v-select
       v-model="form.severity"

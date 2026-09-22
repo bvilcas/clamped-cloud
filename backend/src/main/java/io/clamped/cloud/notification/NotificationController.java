@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.notification;
+package io.clamped.cloud.notification;
 
 import io.clamped.cloud.backendconfig.ApiResponse;
 import org.springframework.http.ResponseEntity;

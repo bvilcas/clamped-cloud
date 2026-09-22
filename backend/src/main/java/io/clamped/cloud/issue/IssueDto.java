@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.issue;
+package io.clamped.cloud.issue;
 
 import java.time.Instant;
 
@@ -7,8 +7,6 @@ public record IssueDto(
         String title,
         String description,
         IssueType type,
-        String cveId,
-        String cweId,
         Severity severity,
         IssueStatus status,
         Instant updatedAt,
@@ -18,6 +16,10 @@ public record IssueDto(
         Instant verifiedAt,
         String repository,
         String commitHash,
+        String eventApp,
+        String eventHost,
+        String eventType,
+        String eventExtra,
         Long projectId
 ) {
     public static IssueDto from(Issue issue) {
@@ -26,8 +28,6 @@ public record IssueDto(
                 issue.getTitle(),
                 issue.getDescription(),
                 issue.getType(),
-                issue.getCveId(),
-                issue.getCweId(),
                 issue.getSeverity(),
                 issue.getStatus(),
                 issue.getUpdatedAt(),
@@ -37,6 +37,10 @@ public record IssueDto(
                 issue.getVerifiedAt(),
                 issue.getRepository(),
                 issue.getCommitHash(),
+                issue.getEventApp(),
+                issue.getEventHost(),
+                issue.getEventType(),
+                issue.getEventExtra(),
                 issue.getProject().getId()
         );
     }

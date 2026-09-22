@@ -34,8 +34,8 @@ interface IssueItem {
 
 const project = ref<ProjectData | null>(null)
 const members = ref<Member[]>([])
-const vulnerabilities = ref<IssueItem[]>([])
-const loadingVulns = ref(true)
+const issues = ref<IssueItem[]>([])
+const loadingIssues = ref(true)
 const showReportForm = ref(false)
 const newMemberRole = ref('')
 const memberActionLoading = ref(false)
@@ -83,8 +83,7 @@ watch(emailQuery, (query) => {
 const role = ref('')
 
 const memberRoleItems = [
-  { title: 'Tester', value: 'TESTER' },
-  { title: 'Programmer', value: 'PROGRAMMER' },
+  { title: 'Member', value: 'MEMBER' },
   { title: 'Lead', value: 'LEAD' },
 ]
 
@@ -117,25 +116,25 @@ const loadMembers = async () => {
   }
 }
 
-const loadVulnerabilities = async () => {
+const loadIssues = async () => {
   try {
     const res = await fetchWithAuth(
       `/api/v1/issues/all/${projectId}`
     )
     if (res.ok) {
-      vulnerabilities.value = await res.json()
+      issues.value = await res.json()
     }
   } catch (err) {
     authStore.logout()
   } finally {
-    loadingVulns.value = false
+    loadingIssues.value = false
   }
 }
 
 onMounted(() => {
   loadProject()
   loadMembers()
-  loadVulnerabilities()
+  loadIssues()
   localStorage.setItem('lastProjectId', projectId)
 })
 
@@ -171,16 +170,16 @@ const handleDeleteProject = async () => {
   }
 }
 
-const handleDeleteVulnerability = async (vulnerabilityId: string) => {
+const handleDeleteIssue = async (issueId: string) => {
   const confirmed = window.confirm('Delete this issue?')
   if (!confirmed) return
   try {
     const res = await fetchWithAuth(
-      `/api/v1/issues/delete/${projectId}/${vulnerabilityId}`,
+      `/api/v1/issues/delete/${projectId}/${issueId}`,
       { method: 'DELETE' }
     )
     if (!res.ok) { const data = await res.json(); alert(data.message || 'Failed to delete issue.'); return }
-    loadVulnerabilities()
+    loadIssues()
   } catch (err: unknown) {
     if (err instanceof Error) console.error('Delete issue failed:', err.message)
     alert('Network or authentication error while deleting.')
@@ -199,7 +198,7 @@ const handleStatusChange = async (issueId: string, newStatus: string) => {
       }
     )
     if (!res.ok) { const data = await res.json(); alert(data.message || 'Failed to update issue status.'); return }
-    loadVulnerabilities()
+    loadIssues()
   } catch (err: unknown) {
     if (err instanceof Error) console.error('Status change failed:', err.message)
     alert('Network or authentication error while updating status.')
@@ -235,7 +234,7 @@ const handleAddMember = async () => {
     }
     selectedUser.value = null
     emailSuggestions.value = []
-    newMemberRole.value = 'TESTER'
+    newMemberRole.value = 'MEMBER'
     loadMembers()
   } catch (err) {
     alert('Failed to add member.')
@@ -265,8 +264,8 @@ const handleRemoveMember = async (userId: string) => {
   }
 }
 
-const handleOpenAssignments = () => {
-  router.push(`/project/${projectId}/assignments`)
+const handleOpenIssues = () => {
+  router.push(`/issues?project=${projectId}`)
 }
 
 const roleDialog = ref({ open: false, memberId: '', memberName: '', currentRole: '', newRole: '' })
@@ -303,7 +302,7 @@ const confirmRoleChange = async () => {
 </script>
 
 <template>
-  <v-container class="pa-8">
+  <v-container fluid class="pa-8">
     <p v-if="!project" class="text-secondary">Loading...</p>
 
     <template v-else>
@@ -331,7 +330,7 @@ const confirmRoleChange = async () => {
 
       <!-- Two-column layout -->
       <v-row>
-        <!-- Left: Vulnerabilities -->
+        <!-- Left: Issues -->
         <v-col cols="12" md="6">
           <v-card variant="elevated" elevation="2">
             <v-card-title class="d-flex justify-space-between align-center">
@@ -342,12 +341,12 @@ const confirmRoleChange = async () => {
             </v-card-title>
             <v-card-text>
               <div v-if="showReportForm" class="mb-4">
-                <Report :project-id="projectId" :on-success="() => { loadVulnerabilities(); showReportForm = false }" />
+                <Report :project-id="projectId" :on-success="() => { loadIssues(); showReportForm = false }" />
               </div>
 
-              <p v-if="loadingVulns" class="text-secondary">Loading issues...</p>
-              <p v-else-if="vulnerabilities.length === 0" class="text-secondary">No issues reported yet.</p>
-              <template v-else v-for="(v, i) in vulnerabilities" :key="v.id">
+              <p v-if="loadingIssues" class="text-secondary">Loading issues...</p>
+              <p v-else-if="issues.length === 0" class="text-secondary">No issues reported yet.</p>
+              <template v-else v-for="(v, i) in issues" :key="v.id">
                 <v-divider v-if="i > 0" class="my-2" />
                 <div class="d-flex flex-column ga-1 py-1">
                   <div class="d-flex justify-space-between align-center">
@@ -359,7 +358,7 @@ const confirmRoleChange = async () => {
                     <div class="d-flex ga-1">
                       <v-btn size="x-small" color="success" variant="tonal" @click="handleStatusChange(v.id, 'PATCHED')">Patch</v-btn>
                       <v-btn size="x-small" color="secondary" variant="tonal" @click="handleStatusChange(v.id, 'VERIFIED')">Verify</v-btn>
-                      <v-btn v-if="role === 'LEAD'" size="x-small" color="error" variant="outlined" @click="handleDeleteVulnerability(v.id)">Delete</v-btn>
+                      <v-btn v-if="role === 'LEAD'" size="x-small" color="error" variant="outlined" @click="handleDeleteIssue(v.id)">Delete</v-btn>
                     </div>
                   </div>
                 </div>
@@ -368,7 +367,7 @@ const confirmRoleChange = async () => {
           </v-card>
         </v-col>
 
-        <!-- Right: Members + Assignments -->
+        <!-- Right: Members + Issues -->
         <v-col cols="12" md="6">
           <!-- Members -->
           <v-card variant="elevated" elevation="2" class="mb-6">
@@ -437,10 +436,10 @@ const confirmRoleChange = async () => {
 
           <!-- Assignments -->
           <v-card variant="elevated" elevation="2">
-            <v-card-title>Assignments</v-card-title>
+            <v-card-title>Issues</v-card-title>
             <v-card-text>
               <p class="text-secondary mb-3">View, self-assign, and manage issue roles.</p>
-              <v-btn color="info" @click="handleOpenAssignments">Open Assignments</v-btn>
+              <v-btn color="info" @click="handleOpenIssues">Open Issues</v-btn>
             </v-card-text>
           </v-card>
         </v-col>

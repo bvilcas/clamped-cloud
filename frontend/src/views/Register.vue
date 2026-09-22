@@ -18,7 +18,7 @@ const loading = ref(false)
 const showPassword = ref(false)
 
 const bullets = [
-  { icon: 'mdi-shield-check-outline', text: 'Full vulnerability lifecycle tracking' },
+  { icon: 'mdi-shield-check-outline', text: 'Full issue lifecycle tracking' },
   { icon: 'mdi-account-multiple-outline', text: 'Team roles and project management' },
   { icon: 'mdi-message-text-outline', text: 'Real-time project messaging' }
 ]
@@ -59,7 +59,7 @@ const handleSubmit = async () => {
         <h2 class="brand-headline">Security starts with visibility.</h2>
         <p class="brand-sub">
           Clamped gives your team one place to track, triage, and resolve
-          every vulnerability from report to patch.
+          every issue from report to patch.
         </p>
         <div class="brand-bullets">
           <div v-for="b in bullets" :key="b.text" class="brand-bullet">

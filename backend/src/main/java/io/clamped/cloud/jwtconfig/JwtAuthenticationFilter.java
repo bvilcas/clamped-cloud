@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.jwtconfig;
+package io.clamped.cloud.jwtconfig;
 
 import io.clamped.cloud.user.User;
 import io.clamped.cloud.user.UserRepository;

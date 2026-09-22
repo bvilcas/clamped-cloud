@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.userproject;
+package io.clamped.cloud.userproject;
 
 import io.clamped.cloud.project.Project;
 import io.clamped.cloud.user.User;
@@ -24,7 +24,7 @@ public class UserProject {
     private UserProjectId id = new UserProjectId();
 
 
-    // MapsId takes the ID from the student and the ID from the vulnerability, and combine them to create the primary key for this record.
+    // MapsId takes the ID from the student and the ID from the issue, and combine them to create the primary key for this record.
     // This primary key is also called the composite key in this context (merges the two primary/foreign keys)
     // Foreign keys live in the combining table
     @ManyToOne(fetch = FetchType.LAZY)
@@ -35,13 +35,13 @@ public class UserProject {
 
     // @MapsId will generate an embedded ID, no need for sequence generation or instantiation in constructor
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("projectId") // boilerplate, references the UserVulnerabilityId composite create
+    @MapsId("projectId") // boilerplate, references the UserIssueId composite create
     @JoinColumn(name = "project_id")
     @JsonIgnore
     private Project project;
 
     @Enumerated(EnumType.STRING)
-    private ProjectRole role; // ADMIN, PROGRAMMER, VIEWER
+    private ProjectRole role; // LEAD, MEMBER
 
     // Only for seeding (without id)
     public UserProject(User user, Project project, ProjectRole role) {

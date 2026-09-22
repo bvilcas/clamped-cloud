@@ -5,7 +5,7 @@ import { fetchWithAuth } from '@/utils/fetchWithAuth'
 
 const router = useRouter()
 
-interface CalendarVuln {
+interface CalendarIssue {
   id: number
   title: string
   severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
@@ -15,7 +15,7 @@ interface CalendarVuln {
   projectName: string
 }
 
-const vulns = ref<CalendarVuln[]>([])
+const issues = ref<CalendarIssue[]>([])
 const loading = ref(true)
 const error = ref('')
 const today = new Date()
@@ -31,10 +31,10 @@ const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
 onMounted(async () => {
   try {
-    const res = await fetchWithAuth('/api/v1/calendar/vulns')
+    const res = await fetchWithAuth('/api/v1/calendar/issues')
     if (res.ok) {
       const data = await res.json()
-      vulns.value = data.data || []
+      issues.value = data.data || []
     } else {
       error.value = 'Failed to load calendar data'
     }
@@ -82,9 +82,9 @@ const calendarCells = computed<(number | null)[]>(() => {
   return cells
 })
 
-/** Returns vulns whose dueAt falls on a specific day in the displayed month */
-function vulnsOnDay(day: number): CalendarVuln[] {
-  return vulns.value.filter(v => {
+/** Returns issues whose dueAt falls on a specific day in the displayed month */
+function issuesOnDay(day: number): CalendarIssue[] {
+  return issues.value.filter(v => {
     const d = new Date(v.dueAt)
     return (
       d.getFullYear() === currentYear.value &&
@@ -102,8 +102,8 @@ function isToday(day: number): boolean {
   )
 }
 
-const selectedVulns = computed<CalendarVuln[]>(() =>
-  selectedDay.value !== null ? vulnsOnDay(selectedDay.value) : []
+const selectedIssues = computed<CalendarIssue[]>(() =>
+  selectedDay.value !== null ? issuesOnDay(selectedDay.value) : []
 )
 
 const severityColor = (s: string) => {
@@ -128,7 +128,7 @@ const statusColor = (s: string) => {
 
 /** Highest severity on a day drives the dot color */
 function dayColor(day: number): string {
-  const v = vulnsOnDay(day)
+  const v = issuesOnDay(day)
   if (v.some(x => x.severity === 'CRITICAL')) return 'error'
   if (v.some(x => x.severity === 'HIGH'))     return 'deep-orange'
   if (v.some(x => x.severity === 'MEDIUM'))   return 'warning'
@@ -138,9 +138,10 @@ function dayColor(day: number): string {
 </script>
 
 <template>
-  <v-container class="pa-6" style="max-width: 860px">
-    <div class="d-flex align-center justify-space-between mb-4">
-      <h1 class="text-h5 text-info">Due-Date Calendar</h1>
+  <v-container fluid class="pa-8">
+   <div class="narrow-content">
+    <div class="d-flex align-center justify-space-between mb-6">
+      <h1 class="text-info">Due-Date Calendar</h1>
       <v-btn size="small" variant="tonal" color="info" @click="goToToday">Today</v-btn>
     </div>
 
@@ -150,7 +151,7 @@ function dayColor(day: number): string {
       <!-- Month navigation -->
       <div class="d-flex align-center justify-space-between px-4 pt-3 pb-2">
         <v-btn icon="mdi-chevron-left" variant="text" size="small" @click="prevMonth" />
-        <span class="text-h6 font-weight-medium">
+        <span class="text-h6 font-weight-medium cal-month-label">
           {{ MONTH_NAMES[currentMonth] }} {{ currentYear }}
         </span>
         <v-btn icon="mdi-chevron-right" variant="text" size="small" @click="nextMonth" />
@@ -181,16 +182,16 @@ function dayColor(day: number): string {
             <span class="cal-day-num">{{ cell }}</span>
             <!-- Severity dots -->
             <div class="cal-dots">
-              <template v-for="v in vulnsOnDay(cell).slice(0, 3)" :key="v.id">
+              <template v-for="v in issuesOnDay(cell).slice(0, 3)" :key="v.id">
                 <span
                   class="cal-dot"
                   :style="{ background: `rgb(var(--v-theme-${dayColor(cell)}))` }"
                 />
               </template>
               <span
-                v-if="vulnsOnDay(cell).length > 3"
+                v-if="issuesOnDay(cell).length > 3"
                 class="cal-dot-more text-caption"
-              >+{{ vulnsOnDay(cell).length - 3 }}</span>
+              >+{{ issuesOnDay(cell).length - 3 }}</span>
             </div>
           </template>
         </div>
@@ -202,14 +203,14 @@ function dayColor(day: number): string {
       <v-card v-if="selectedDay !== null" variant="outlined" class="mt-2">
         <v-card-title class="text-body-1 font-weight-medium pa-3 pb-1">
           {{ MONTH_NAMES[currentMonth] }} {{ selectedDay }}, {{ currentYear }}
-          <span v-if="selectedVulns.length === 0" class="text-medium-emphasis text-body-2 ml-2">— no vulnerabilities due</span>
+          <span v-if="selectedIssues.length === 0" class="text-medium-emphasis text-body-2 ml-2">— no issues due</span>
         </v-card-title>
 
-        <v-list v-if="selectedVulns.length > 0" density="compact" class="pa-2">
+        <v-list v-if="selectedIssues.length > 0" density="compact" class="pa-2">
           <v-list-item
-            v-for="v in selectedVulns"
+            v-for="v in selectedIssues"
             :key="v.id"
-            class="vuln-item mb-1"
+            class="issue-item mb-1"
             rounded="lg"
             @click="router.push(`/project/${v.projectId}`)"
           >
@@ -243,14 +244,42 @@ function dayColor(day: number): string {
         <span class="text-caption text-medium-emphasis">{{ label }}</span>
       </div>
     </div>
+   </div>
   </v-container>
 </template>
 
 <style scoped>
+.v-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.narrow-content {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.v-card {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
 .cal-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 4px;
+}
+
+/* The day-cell grid (not the weekday-header row) grows to fill remaining space */
+.cal-grid:not(.cal-header) {
+  flex: 1;
+  min-height: 0;
+  grid-auto-rows: 1fr;
 }
 
 .cal-header .cal-cell {
@@ -262,7 +291,7 @@ function dayColor(day: number): string {
 }
 
 .cal-cell {
-  min-height: 64px;
+  min-height: 56px;
   border-radius: 8px;
   padding: 6px 6px 4px;
   display: flex;
@@ -294,11 +323,16 @@ function dayColor(day: number): string {
   pointer-events: none;
 }
 
+.cal-month-label {
+  color: rgb(var(--v-theme-on-surface));
+}
+
 .cal-day-num {
   font-size: 0.8rem;
   font-weight: 500;
   line-height: 1;
   margin-bottom: 4px;
+  color: rgb(var(--v-theme-on-surface));
 }
 
 .cal-dots {
@@ -321,11 +355,11 @@ function dayColor(day: number): string {
   line-height: 1;
 }
 
-.vuln-item {
+.issue-item {
   background: rgba(var(--v-theme-on-surface), 0.04);
   cursor: pointer;
 }
-.vuln-item:hover {
+.issue-item:hover {
   background: rgba(var(--v-theme-on-surface), 0.08);
 }
 </style>

@@ -2,31 +2,31 @@
 </script>
 
 <template>
-  <v-container class="pa-8">
+  <v-container fluid class="pa-8">
     <h1 class="text-info mb-4">Help & Documentation</h1>
     <p class="intro mb-8">
       Welcome to Clamped! Here you'll find guidance on how to use the system,
-      report vulnerabilities, and manage your security workflow.
+      report issues, and manage your security workflow.
     </p>
 
     <v-card variant="elevated" elevation="2" class="help-card">
       <h2 class="card-title">Getting Started</h2>
       <p>
-        After logging in, use the sidebar to navigate to your Profile, Vulnerabilities,
+        After logging in, use the sidebar to navigate to your Profile, Issues,
         and other sections. Your session is secured using JSESSIONID cookies and
         refresh token rotation for continuous access.
       </p>
     </v-card>
 
     <v-card variant="elevated" elevation="2" class="help-card">
-      <h2 class="card-title">Reporting Vulnerabilities</h2>
+      <h2 class="card-title">Reporting Issues</h2>
       <p class="mb-2">
-        Go to the <strong>Report</strong> page to submit a new vulnerability. Fill in details like:
+        Go to the <strong>Report</strong> page to submit a new issue. Fill in details like:
       </p>
       <ul class="help-list">
         <li>Title and description</li>
         <li>Severity level (Low, Medium, High, Critical)</li>
-        <li>CVE or CWE ID if available</li>
+        <li>Event details, if it came from a captured error</li>
         <li>Repository and commit hash</li>
         <li>Due date for resolution</li>
       </ul>
@@ -35,7 +35,7 @@
     <v-card variant="elevated" elevation="2" class="help-card">
       <h2 class="card-title">Managing Assignments</h2>
       <p class="mb-2">
-        Vulnerabilities are categorized into:
+        Issues are categorized into:
       </p>
       <ul class="help-list mb-3">
         <li><strong>Reported</strong> -- Issues you've submitted.</li>
@@ -43,7 +43,7 @@
         <li><strong>Verified</strong> -- Issues you have confirmed as fixed.</li>
       </ul>
       <p>
-        You can also self-assign to open vulnerabilities if your team allows it.
+        You can also self-assign to open issues if your team allows it.
       </p>
     </v-card>
 

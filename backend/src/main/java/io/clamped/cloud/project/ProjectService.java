@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.project;
+package io.clamped.cloud.project;
 
 import io.clamped.cloud.user.User;
 import io.clamped.cloud.user.UserPrincipal;
@@ -87,7 +87,7 @@ public class ProjectService {
 
         System.out.println("User and projects checks are done");
 
-        // ✅ Vulnerabilities (and their UserVulnerability links) WILL cascade because collection is maintained
+        // ✅ Issues (and their UserIssue links) WILL cascade because collection is maintained
         projectRepository.delete(project);
     }
 }

@@ -9,7 +9,7 @@ const authStore = useAuthStore()
 const features = [
   {
     icon: 'mdi-shield-alert-outline',
-    title: 'Track Vulnerabilities',
+    title: 'Track Issues',
     description: 'Log, triage, and resolve security issues with full severity tracking and lifecycle management.'
   },
   {
@@ -65,11 +65,11 @@ watch(
         </v-chip>
 
         <h1 class="hero-headline text-info">
-          Vulnerability Management,<br />Streamlined.
+          Issue Management,<br />Streamlined.
         </h1>
 
         <p class="hero-subtitle text-secondary">
-          Clamped brings your security team together. Track vulnerabilities,
+          Clamped brings your security team together. Track issues,
           manage projects, and coordinate fixes — all in one place.
         </p>
 
@@ -113,7 +113,7 @@ watch(
     <section class="features-section">
       <h2 class="features-heading text-center mb-2">Everything your security team needs</h2>
       <p class="text-center text-secondary mb-10">
-        One platform to manage the full vulnerability lifecycle.
+        One platform to manage the full issue lifecycle.
       </p>
       <v-container>
         <v-row justify="center">
@@ -138,7 +138,7 @@ watch(
         <v-icon icon="mdi-shield-lock-outline" color="info" size="40" class="mb-4" />
         <h2 class="cta-heading mb-2">Ready to secure your projects?</h2>
         <p class="text-secondary mb-6">
-          Join your team on Clamped and start managing vulnerabilities today.
+          Join your team on Clamped and start managing issues today.
         </p>
         <v-btn
           color="info"

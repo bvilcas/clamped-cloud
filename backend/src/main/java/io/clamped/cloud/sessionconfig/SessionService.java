@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.sessionconfig;
+package io.clamped.cloud.sessionconfig;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;

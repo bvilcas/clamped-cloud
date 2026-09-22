@@ -10,7 +10,7 @@ interface NotificationItem {
   type: string
   message: string
   relatedProjectId: number | null
-  relatedVulnId: number | null
+  relatedIssueId: number | null
   read: boolean
   createdAt: string
 }
@@ -29,12 +29,12 @@ const unreadCount = computed(() => notifications.value.filter(n => !n.read).leng
 
 const notifTypeIcon = (type: string) => {
   const map: Record<string, string> = {
-    VULN_ASSIGNED:        'mdi-shield-check-outline',
-    VULN_UNASSIGNED:      'mdi-shield-remove-outline',
-    VULN_REPORTED:        'mdi-shield-alert-outline',
-    VULN_STATUS_CHANGED:  'mdi-shield-refresh-outline',
-    MEMBER_SELF_ASSIGNED: 'mdi-account-check-outline',
-    MEMBER_SELF_REVOKED:  'mdi-account-minus-outline',
+    ISSUE_ASSIGNED:        'mdi-shield-check-outline',
+    ISSUE_UNASSIGNED:      'mdi-shield-remove-outline',
+    ISSUE_REPORTED:        'mdi-shield-alert-outline',
+    ISSUE_STATUS_CHANGED:  'mdi-shield-refresh-outline',
+    ISSUE_SELF_ASSIGNED: 'mdi-account-check-outline',
+    ISSUE_SELF_REVOKED:  'mdi-account-minus-outline',
     PROJECT_ADDED:        'mdi-folder-plus-outline',
     PROJECT_REMOVED:      'mdi-folder-remove-outline',
   }
@@ -42,21 +42,21 @@ const notifTypeIcon = (type: string) => {
 }
 
 const notifTypeColor = (type: string) => {
-  if (type === 'VULN_REPORTED')        return 'warning'
-  if (type === 'VULN_ASSIGNED' || type === 'MEMBER_SELF_ASSIGNED') return 'success'
-  if (type === 'VULN_UNASSIGNED' || type === 'MEMBER_SELF_REVOKED' || type === 'PROJECT_REMOVED') return 'error'
+  if (type === 'ISSUE_REPORTED')        return 'warning'
+  if (type === 'ISSUE_ASSIGNED' || type === 'ISSUE_SELF_ASSIGNED') return 'success'
+  if (type === 'ISSUE_UNASSIGNED' || type === 'ISSUE_SELF_REVOKED' || type === 'PROJECT_REMOVED') return 'error'
   if (type === 'PROJECT_ADDED')        return 'info'
   return 'secondary'
 }
 
 const notifTypeLabel = (type: string) => {
   const map: Record<string, string> = {
-    VULN_ASSIGNED:        'Assigned',
-    VULN_UNASSIGNED:      'Unassigned',
-    VULN_REPORTED:        'New Report',
-    VULN_STATUS_CHANGED:  'Status Change',
-    MEMBER_SELF_ASSIGNED: 'Self-Assigned',
-    MEMBER_SELF_REVOKED:  'Self-Revoked',
+    ISSUE_ASSIGNED:        'Assigned',
+    ISSUE_UNASSIGNED:      'Unassigned',
+    ISSUE_REPORTED:        'New Report',
+    ISSUE_STATUS_CHANGED:  'Status Change',
+    ISSUE_SELF_ASSIGNED: 'Self-Assigned',
+    ISSUE_SELF_REVOKED:  'Self-Revoked',
     PROJECT_ADDED:        'Added to Project',
     PROJECT_REMOVED:      'Removed from Project',
   }

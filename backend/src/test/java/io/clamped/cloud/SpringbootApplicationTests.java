@@ -1,4 +1,4 @@
-﻿// ==================== 1. ClampedCloudApplicationTests.java ====================
+// ==================== 1. ClampedCloudApplicationTests.java ====================
 package io.clamped.cloud;
 
 import org.junit.jupiter.api.Test;

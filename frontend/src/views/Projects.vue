@@ -36,7 +36,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <v-container class="pa-8">
+  <v-container fluid class="pa-8">
     <h1 class="text-info mb-6">My Projects</h1>
 
     <p v-if="projects.length === 0" class="text-secondary">No projects found.</p>

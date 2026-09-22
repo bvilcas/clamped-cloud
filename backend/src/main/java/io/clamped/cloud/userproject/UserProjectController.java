@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.userproject;
+package io.clamped.cloud.userproject;
 import io.clamped.cloud.backendconfig.ApiResponse;
 import io.clamped.cloud.project.Project;
 import org.springframework.http.ResponseEntity;

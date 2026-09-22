@@ -15,6 +15,10 @@ export interface EventGroupDTO {
     sourceFile: string | null
     sourceLine: number | null
     sourceMethod: string | null
+    appName: string | null
+    host: string | null
+    eventType: string | null
+    extra: string | null
     linkedIssueId: number | null
     projectId: number
 }

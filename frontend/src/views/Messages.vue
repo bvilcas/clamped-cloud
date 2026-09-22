@@ -137,7 +137,7 @@ const groupedMessages = computed(() => {
 </script>
 
 <template>
-  <v-container class="pa-8">
+  <v-container fluid class="pa-8">
     <h1 class="text-info mb-1">Messages</h1>
     <p class="text-secondary mb-4">Project-based team messaging.</p>
 

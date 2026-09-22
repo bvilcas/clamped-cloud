@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.userproject;
+package io.clamped.cloud.userproject;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

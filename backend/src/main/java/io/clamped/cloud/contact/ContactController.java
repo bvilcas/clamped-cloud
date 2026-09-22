@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.contact;
+package io.clamped.cloud.contact;
 
 import io.clamped.cloud.backendconfig.ApiResponse;
 import jakarta.validation.Valid;

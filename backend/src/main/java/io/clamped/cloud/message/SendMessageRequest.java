@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.message;
+package io.clamped.cloud.message;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

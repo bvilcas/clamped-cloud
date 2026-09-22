@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.event;
+package io.clamped.cloud.event;
 
 import io.clamped.cloud.issue.Severity;
 
@@ -21,6 +21,10 @@ public record EventGroupDto(
         String sourceFile,
         Integer sourceLine,
         String sourceMethod,
+        String appName,
+        String host,
+        String eventType,
+        String extra,
         Long linkedIssueId,
         Long projectId
 ) {}

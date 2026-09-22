@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.user;
+package io.clamped.cloud.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

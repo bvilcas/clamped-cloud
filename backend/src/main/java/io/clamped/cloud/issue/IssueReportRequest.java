@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.issue;
+package io.clamped.cloud.issue;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -10,9 +10,6 @@ public record IssueReportRequest(
         @NotBlank String title,
         String description,
         IssueType type,           // optional — defaults to OTHER
-        // Security context (optional metadata tags, relevant when type = SECURITY)
-        String cveId,
-        String cweId,
         @NotNull Severity severity,
         @NotNull IssueStatus status,
         @NotNull Instant dueAt,

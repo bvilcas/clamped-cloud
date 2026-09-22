@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.userissue;
+package io.clamped.cloud.userissue;
 
 import io.clamped.cloud.backendconfig.ApiResponse;
 import io.clamped.cloud.issue.Issue;

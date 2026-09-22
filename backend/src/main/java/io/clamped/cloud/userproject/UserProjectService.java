@@ -1,8 +1,5 @@
-﻿package io.clamped.cloud.userproject;
+package io.clamped.cloud.userproject;
 
-import io.clamped.cloud.issue.Issue;
-import io.clamped.cloud.issue.IssueRepository;
-import io.clamped.cloud.issue.IssueStatus;
 import io.clamped.cloud.notification.NotificationService;
 import io.clamped.cloud.notification.NotificationType;
 import io.clamped.cloud.project.Project;
@@ -10,8 +7,6 @@ import io.clamped.cloud.project.ProjectRepository;
 import io.clamped.cloud.user.User;
 import io.clamped.cloud.user.UserPrincipal;
 import io.clamped.cloud.user.UserRepository;
-import io.clamped.cloud.userissue.RoleInIssue;
-import io.clamped.cloud.userissue.UserIssue;
 import io.clamped.cloud.userissue.UserIssueRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.core.Authentication;
@@ -27,7 +22,6 @@ public class UserProjectService {
 
     private final UserProjectRepository userProjectRepository;
     private final UserIssueRepository userIssueRepository;
-    private final IssueRepository issueRepository;
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
     private final NotificationService notificationService;
@@ -35,13 +29,11 @@ public class UserProjectService {
     public UserProjectService(UserProjectRepository userProjectRepository,
                                UserIssueRepository userIssueRepository,
                                UserRepository userRepository,
-                               IssueRepository issueRepository,
                                ProjectRepository projectRepository,
                                NotificationService notificationService) {
         this.userProjectRepository = userProjectRepository;
         this.userIssueRepository = userIssueRepository;
         this.userRepository = userRepository;
-        this.issueRepository = issueRepository;
         this.projectRepository = projectRepository;
         this.notificationService = notificationService;
     }
@@ -139,75 +131,6 @@ public class UserProjectService {
 
         if (oldRole == newRole) {
             throw new IllegalStateException("User already has this project role");
-        }
-
-        // PROGRAMMER → TESTER: remove ASSIGNEE issue links
-        if (oldRole == ProjectRole.PROGRAMMER && newRole == ProjectRole.TESTER) {
-            List<UserIssue> assigneeLinks =
-                    userIssueRepository.findByUserIdAndIssueProjectIdAndRole(userId, projectId, RoleInIssue.ASSIGNEE);
-
-            for (UserIssue link : assigneeLinks) {
-                Issue issue = link.getIssue();
-                userIssueRepository.delete(link);
-                boolean hasOtherAssignees = userIssueRepository.existsByIssueIdAndRole(issue.getId(), RoleInIssue.ASSIGNEE);
-                if (!hasOtherAssignees && issue.getStatus() == IssueStatus.IN_PROGRESS) {
-                    issue.setStatus(IssueStatus.REPORTED);
-                    issue.setUpdatedAt(Instant.now());
-                    issueRepository.save(issue);
-                }
-            }
-        }
-
-        // TESTER → PROGRAMMER: remove VERIFIER issue links
-        if (oldRole == ProjectRole.TESTER && newRole == ProjectRole.PROGRAMMER) {
-            List<UserIssue> verifierLinks =
-                    userIssueRepository.findByUserIdAndIssueProjectIdAndRole(userId, projectId, RoleInIssue.VERIFIER);
-
-            for (UserIssue link : verifierLinks) {
-                Issue issue = link.getIssue();
-                userIssueRepository.delete(link);
-                boolean hasOtherVerifiers = userIssueRepository.existsByIssueIdAndRole(issue.getId(), RoleInIssue.VERIFIER);
-                if (!hasOtherVerifiers && issue.getStatus() == IssueStatus.UNDER_REVIEW) {
-                    issue.setStatus(IssueStatus.IN_PROGRESS);
-                    issue.setUpdatedAt(Instant.now());
-                    issueRepository.save(issue);
-                }
-            }
-        }
-
-        // LEAD → TESTER: remove ASSIGNEE links; keep VERIFIER
-        // LEAD → PROGRAMMER: remove VERIFIER links; keep ASSIGNEE
-        if (oldRole == ProjectRole.LEAD && newRole != ProjectRole.LEAD) {
-            List<UserIssue> assigneeLinks =
-                    userIssueRepository.findByUserIdAndIssueProjectIdAndRole(userId, projectId, RoleInIssue.ASSIGNEE);
-            List<UserIssue> verifierLinks =
-                    userIssueRepository.findByUserIdAndIssueProjectIdAndRole(userId, projectId, RoleInIssue.VERIFIER);
-
-            if (newRole == ProjectRole.TESTER) {
-                for (UserIssue link : assigneeLinks) {
-                    Issue issue = link.getIssue();
-                    userIssueRepository.delete(link);
-                    boolean hasOtherAssignees = userIssueRepository.existsByIssueIdAndRole(issue.getId(), RoleInIssue.ASSIGNEE);
-                    if (!hasOtherAssignees && issue.getStatus() == IssueStatus.IN_PROGRESS) {
-                        issue.setStatus(IssueStatus.REPORTED);
-                        issue.setUpdatedAt(Instant.now());
-                        issueRepository.save(issue);
-                    }
-                }
-            }
-
-            if (newRole == ProjectRole.PROGRAMMER) {
-                for (UserIssue link : verifierLinks) {
-                    Issue issue = link.getIssue();
-                    userIssueRepository.delete(link);
-                    boolean hasOtherVerifiers = userIssueRepository.existsByIssueIdAndRole(issue.getId(), RoleInIssue.VERIFIER);
-                    if (!hasOtherVerifiers && issue.getStatus() == IssueStatus.UNDER_REVIEW) {
-                        issue.setStatus(IssueStatus.IN_PROGRESS);
-                        issue.setUpdatedAt(Instant.now());
-                        issueRepository.save(issue);
-                    }
-                }
-            }
         }
 
         if (newRole == ProjectRole.LEAD) {
@@ -314,7 +237,7 @@ public class UserProjectService {
         String projectName = link.getProject().getName();
         Long projectId = link.getProject().getId();
 
-        userIssueRepository.deleteAllAssignmentsForUserInProject(request.userId(), request.projectId());
+        userIssueRepository.revokeAllAssignmentsForUserInProject(request.userId(), request.projectId(), Instant.now());
         userProjectRepository.delete(link);
 
         notificationService.notify(
@@ -378,12 +301,12 @@ public class UserProjectService {
 
         if (!isLead) {
             userProjectRepository.delete(link);
-            userIssueRepository.deleteAllAssignmentsForUserInProject(userId, projectId);
+            userIssueRepository.revokeAllAssignmentsForUserInProject(userId, projectId, Instant.now());
             return;
         }
 
         userProjectRepository.delete(link);
-        userIssueRepository.deleteAllAssignmentsForUserInProject(userId, projectId);
+        userIssueRepository.revokeAllAssignmentsForUserInProject(userId, projectId, Instant.now());
 
         if (totalMembers == 1) {
             projectRepository.delete(project);

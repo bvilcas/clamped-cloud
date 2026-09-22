@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud.userproject;
+package io.clamped.cloud.userproject;
 
 import jakarta.persistence.Embeddable;
 import lombok.Data;

@@ -72,7 +72,7 @@ const handlePasswordChange = async () => {
 </script>
 
 <template>
-  <v-container class="pa-8">
+  <v-container fluid class="pa-8">
     <p v-if="!user" class="text-secondary">Loading profile...</p>
 
     <template v-else>

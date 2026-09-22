@@ -1,4 +1,4 @@
-﻿package io.clamped.cloud;
+package io.clamped.cloud;
 
 import io.clamped.cloud.project.Project;
 import io.clamped.cloud.project.ProjectRepository;
