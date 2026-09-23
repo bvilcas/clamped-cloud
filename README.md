@@ -156,7 +156,6 @@ clamped-cloud/
             │
             ├── Projects.vue  ProjectPage.vue
             ├── CreateProject.vue  UpdateProjectPage.vue
-            ├── Team.vue                # Members: invite, change role, remove
             │
             ├── Events.vue              # Event groups waiting to be triaged
             ├── Calendar.vue            # Due dates for open issues
