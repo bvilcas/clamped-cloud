@@ -167,7 +167,6 @@ const pages = [
   { key: 'projects',       icon: 'mdi-folder-outline',         title: 'Projects',             subtitle: 'All your projects',             path: '/projects' },
   { key: 'create-project', icon: 'mdi-folder-plus-outline',    title: 'Create Project',       subtitle: 'Start a new project',           path: '/projects/create' },
   { key: 'issues',          icon: 'mdi-shield-alert-outline',   title: 'My Issues',   subtitle: 'Reported, assigned & verified', path: '/issues' },
-  { key: 'messages',       icon: 'mdi-message-outline',        title: 'Messages',             subtitle: 'Project channels',              path: '/messages' },
   { key: 'team',           icon: 'mdi-account-group-outline',  title: 'Team',                 subtitle: 'Members across all projects',   path: '/team' },
   { key: 'profile',        icon: 'mdi-account-outline',        title: 'Profile',              subtitle: 'Your profile settings',         path: '/profile' },
   { key: 'settings',       icon: 'mdi-cog-outline',            title: 'Settings',             subtitle: 'App preferences',               path: '/settings' },

@@ -12,7 +12,6 @@ const { toggleSidebar } = useSidebar()
 const isProjectsActive = computed(() => route.path.startsWith("/projects") || route.path.startsWith("/project/"))
 const isIssuesActive = computed(() => route.path.startsWith("/issues"))
 const isEventsActive = computed(() => route.path.startsWith("/events"))
-const isMessagesActive = computed(() => route.path.startsWith("/messages"))
 const isTeamActive = computed(() => route.path.startsWith("/team"))
 const isHelpActive = computed(() => route.path.startsWith("/help"))
 const isContactActive = computed(() => route.path.startsWith("/contact"))
@@ -43,10 +42,6 @@ const moreOpen = ref(
       <v-btn variant="text" block class="nav-item" :class="{ 'nav-item-active': isIssuesActive }"
         prepend-icon="mdi-shield-alert-outline" @click="router.push('/issues')">
         My Issues
-      </v-btn>
-      <v-btn variant="text" block class="nav-item" :class="{ 'nav-item-active': isMessagesActive }"
-        prepend-icon="mdi-message-outline" @click="router.push('/messages')">
-        Messages
       </v-btn>
       <v-btn variant="text" block class="nav-item" :class="{ 'nav-item-active': isTeamActive }"
         prepend-icon="mdi-account-group-outline" @click="router.push('/team')">

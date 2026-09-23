@@ -2,8 +2,7 @@
 // The member list for a project: invite somebody, change what they are, or
 // take them off. All three are lead-only; a member sees the list read-only.
 //
-// Rebuilt for the redesign, so it uses the shared page shell rather than a
-// card grid of its own. Not wired up yet.
+// Not wired up yet.
 import { ref, onMounted } from 'vue'
 import { fetchWithAuth } from '@/utils/fetchWithAuth'
 

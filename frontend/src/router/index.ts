@@ -20,9 +20,9 @@ import Settings from '@/views/Settings.vue'
 import Help from '@/views/Help.vue'
 import Contact from '@/views/Contact.vue'
 import About from '@/views/About.vue'
-import Messages from '@/views/Messages.vue'
 import Team from '@/views/Team.vue'
 import IssueDetail from '@/views/IssueDetail.vue'
+
 import Notifications from '@/views/Notifications.vue'
 import Calendar from '@/views/Calendar.vue'
 
@@ -140,12 +140,6 @@ const routes: RouteRecordRaw[] = [
     path: '/about',
     name: 'About',
     component: About,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/messages',
-    name: 'Messages',
-    component: Messages,
     meta: { requiresAuth: true }
   },
   {
