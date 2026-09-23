@@ -157,7 +157,6 @@ clamped-cloud/
             ├── Projects.vue  ProjectPage.vue
             ├── CreateProject.vue  UpdateProjectPage.vue
             │
-            ├── Events.vue              # Events needing attention (link to Issue)
             ├── Calendar.vue            # Due dates for open issues
             ├── Notifications.vue       # The feed behind the bell
             │

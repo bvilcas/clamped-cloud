@@ -13,7 +13,6 @@ import ProjectPage from '@/views/ProjectPage.vue'
 import CreateProject from '@/views/CreateProject.vue'
 import UpdateProjectPage from '@/views/UpdateProjectPage.vue'
 import Issues from '@/views/Issues.vue'
-import Events from '@/views/Events.vue'
 import Report from '@/views/Report.vue'
 import Profile from '@/views/Profile.vue'
 import Settings from '@/views/Settings.vue'
@@ -116,12 +115,6 @@ const routes: RouteRecordRaw[] = [
     path: '/issues',
     name: 'Issues',
     component: Issues,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/events',
-    name: 'Events',
-    component: Events,
     meta: { requiresAuth: true }
   },
   {

@@ -11,7 +11,6 @@ const { toggleSidebar } = useSidebar()
 
 const isProjectsActive = computed(() => route.path.startsWith("/projects") || route.path.startsWith("/project/"))
 const isIssuesActive = computed(() => route.path.startsWith("/issues"))
-const isEventsActive = computed(() => route.path.startsWith("/events"))
 const isTeamActive = computed(() => route.path.startsWith("/team"))
 const isHelpActive = computed(() => route.path.startsWith("/help"))
 const isContactActive = computed(() => route.path.startsWith("/contact"))
@@ -19,7 +18,7 @@ const isAboutActive = computed(() => route.path.startsWith("/about"))
 const isCalendarActive = computed(() => route.path.startsWith("/calendar"))
 
 const moreOpen = ref(
-  route.path.startsWith("/calendar") || route.path.startsWith("/events") // auto-expand if already on a "more" route
+  route.path.startsWith("/calendar") // auto-expand if already on a "more" route
 )
 </script>
 
@@ -69,16 +68,6 @@ const moreOpen = ref(
             @click="router.push('/calendar')"
           >
             Calendar
-          </v-btn>
-          <v-btn
-            variant="text"
-            block
-            class="nav-item nav-item--sub"
-            :class="{ 'nav-item-active': isEventsActive }"
-            prepend-icon="mdi-lightning-bolt-outline"
-            @click="router.push('/events')"
-          >
-            Events
           </v-btn>
         </div>
       </v-expand-transition>
