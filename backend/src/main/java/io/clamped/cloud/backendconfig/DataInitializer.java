@@ -3,7 +3,6 @@ package io.clamped.cloud.backendconfig;
 import io.clamped.cloud.issue.Issue;
 import io.clamped.cloud.issue.IssueRepository;
 import io.clamped.cloud.issue.IssueStatus;
-import io.clamped.cloud.issue.IssueType;
 import io.clamped.cloud.issue.Severity;
 import io.clamped.cloud.jwtconfig.JwtService;
 import io.clamped.cloud.project.Project;
@@ -109,7 +108,6 @@ public class DataInitializer {
             Issue i1 = new Issue(
                     "Authentication bypass in MFA",
                     "Attackers can brute-force 2FA codes due to missing retry limits.",
-                    IssueType.SECURITY,
                     Severity.HIGH,
                     IssueStatus.REPORTED,
                     null,
@@ -125,7 +123,6 @@ public class DataInitializer {
             Issue i2 = new Issue(
                     "SQL Injection in search query",
                     "Unsanitized input appended to SQL statement allows data exfiltration.",
-                    IssueType.SECURITY,
                     Severity.CRITICAL,
                     IssueStatus.IN_PROGRESS,
                     null,
@@ -141,7 +138,6 @@ public class DataInitializer {
             Issue i3 = new Issue(
                     "Broken access control in document preview",
                     "Users can view other teams' files by guessing preview IDs.",
-                    IssueType.SECURITY,
                     Severity.HIGH,
                     IssueStatus.REPORTED,
                     null,
@@ -157,7 +153,6 @@ public class DataInitializer {
             Issue i4 = new Issue(
                     "Insecure object reference",
                     "Users can access restricted files by guessing object IDs.",
-                    IssueType.SECURITY,
                     Severity.HIGH,
                     IssueStatus.REPORTED,
                     null,

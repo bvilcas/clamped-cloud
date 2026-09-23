@@ -3,7 +3,6 @@ package io.clamped.cloud;
 import io.clamped.cloud.issue.Issue;
 import io.clamped.cloud.issue.IssueRepository;
 import io.clamped.cloud.issue.IssueStatus;
-import io.clamped.cloud.issue.IssueType;
 import io.clamped.cloud.issue.Severity;
 import io.clamped.cloud.project.Project;
 import org.junit.jupiter.api.Test;
@@ -37,7 +36,6 @@ class IssueRepositoryTests {
         Issue issue = new Issue(
                 "SQL Injection",
                 "Critical bug",
-                IssueType.SECURITY,
                 Severity.CRITICAL,
                 IssueStatus.REPORTED,
                 null,

@@ -6,7 +6,6 @@ import java.util.UUID;
 public record IssueUpdateRequest(
         String title,
         String description,
-        IssueType type,
         Severity severity,
         Instant dueAt,
         String repository,

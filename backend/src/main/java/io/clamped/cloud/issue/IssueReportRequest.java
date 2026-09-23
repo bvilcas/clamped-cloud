@@ -9,7 +9,6 @@ import java.util.UUID;
 public record IssueReportRequest(
         @NotBlank String title,
         String description,
-        IssueType type,           // optional — defaults to OTHER
         @NotNull Severity severity,
         @NotNull IssueStatus status,
         @NotNull Instant dueAt,

@@ -60,7 +60,7 @@ Three roles attach to an issue, separate from project roles:
 
 ## What a ticket holds
 
-Title, description, type, severity (`LOW` through `CRITICAL`), status, due date, and the
+Title, description, severity (`LOW` through `CRITICAL`), status, due date, and the
 repository and commit the fix landed in. A ticket belongs to exactly one project.
 
 ```
@@ -108,12 +108,30 @@ creates a project is its lead.
 
 ---
 
+## The redesign
+
+The interface is settled in a separate repository as five static pages, and the port is
+in progress here. That repository holds the markup, the class names, the copy, and a
+porting document that lists every change this one needs, with the open questions marked.
+Read it before changing the views.
+
+The short version: twenty-three views become twelve, Vuetify comes out, invitations are
+new backend work, project messaging re-scopes to per-issue notes, and whether event
+groups keep a page of their own is still open.
+
+---
+
 ## Tech Stack
 
 **Backend**: Java 25, Spring Boot 3.5.3, Spring Security (JWT), Spring Session (JDBC),
 JPA/Hibernate, PostgreSQL
 
-**Frontend**: Vue 3, Vuetify 3, Pinia, Vue Router, Vite
+**Frontend**: Vue 3, Pinia, Vue Router, Vite
+
+Vuetify is being removed. The interface is a plain stylesheet with a custom-property
+block at the top, and Vuetify's typography reset fights the 15px/1.5 scale the layout
+depends on. Only two things still need real component behaviour: the notification panel
+behind the bell, and the confirm dialog on deletes.
 
 Running it locally: `start-dev.ps1` brings up the database, the API, and the dev server.
 
@@ -127,12 +145,12 @@ clamped-cloud/
 │   └── src/main/java/io/clamped/cloud/
 │       ├── authentication/         # Login, register, JWT filter
 │       ├── backendconfig/          # Global exception handler, data initializer
-│       ├── calendar/               # Issue due-date calendar endpoint
-│       ├── contact/                # Contact form → admin email
+│       ├── calendar/               # Due dates, folding into the dashboard and list
+│       ├── contact/                # Contact form. No page in the new design
 │       ├── event/                  # Event groups behind a ticket
 │       ├── issue/                  # Issue CRUD, status transitions, reporting
 │       ├── jwtconfig/              # JWT service, security filter chain
-│       ├── message/                # Project messages
+│       ├── message/                # Project messages, re-scoping to issue notes
 │       ├── notification/           # Notifications + email service
 │       ├── project/                # Project management
 │       ├── sessionconfig/          # Spring Session configuration
@@ -147,25 +165,17 @@ clamped-cloud/
         ├── router/                 # Vue Router with auth guards
         ├── stores/                 # Pinia auth store
         ├── utils/                  # fetchWithAuth, authService, settingsStorage
-        └── views/                  # One file per page
-            ├── Home.vue                # Landing page, signed out
+        └── views/                  # Twelve pages after the port, from 23
+            ├── Home.vue                # Landing page, with the sign-up card
+            ├── Login.vue               # Sign in
             ├── Dashboard.vue           # Where you left off
-            ├── Issues.vue              # The issue list
+            ├── Issues.vue              # The issue list, and a project's issues
             ├── IssueDetail.vue         # One issue: actions, roles, progress
+            ├── EditIssue.vue           # Title, description, severity, due date
             ├── Report.vue              # File an issue
-            │
-            ├── Projects.vue            # Projects you belong to
-            ├── ProjectPage.vue         # One project
-            ├── CreateProject.vue       # New project
-            ├── UpdateProjectPage.vue   # Project settings
-            ├── Team.vue                # Members: invite, change role, remove
-            │
-            ├── Events.vue              # Event groups waiting to be triaged
-            ├── Calendar.vue            # Due dates for open issues
-            ├── Messages.vue            # Per-project messaging
-            ├── Notifications.vue       # The feed behind the bell
-            │
-            ├── Login.vue  Register.vue  Logout.vue
-            ├── Profile.vue  Settings.vue
-            └── Help.vue  Contact.vue  About.vue
+            ├── Projects.vue            # Projects you belong to, and creating one
+            ├── ProjectPage.vue         # One project: roster, settings, issues
+            ├── Settings.vue            # Profile, password, notifications
+            ├── AcceptInvite.vue        # Reachable while signed out
+            └── NotFound.vue
 ```

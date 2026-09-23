@@ -71,7 +71,6 @@ public class IssueService {
         Issue issue = Issue.builder()
                 .title(request.title())
                 .description(request.description())
-                .type(request.type() != null ? request.type() : IssueType.OTHER)
                 .severity(request.severity())
                 .status(request.status())
                 .updatedAt(null)
@@ -124,7 +123,6 @@ public class IssueService {
 
         if (request.title() != null && !request.title().isBlank()) issue.setTitle(request.title());
         if (request.description() != null) issue.setDescription(request.description());
-        if (request.type() != null) issue.setType(request.type());
         if (request.severity() != null) issue.setSeverity(request.severity());
         if (request.dueAt() != null) issue.setDueAt(request.dueAt());
         if (request.repository() != null) issue.setRepository(request.repository());
@@ -230,7 +228,6 @@ public class IssueService {
         Issue issue = Issue.builder()
                 .title(title)
                 .description(description)
-                .type(IssueType.OTHER)
                 .status(IssueStatus.REPORTED)
                 .severity(group.getSeverity())
                 .reportedAt(Instant.now())

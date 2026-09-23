@@ -37,10 +37,6 @@ public class Issue {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    @Builder.Default
-    private IssueType type = IssueType.OTHER;
-
-    @Enumerated(EnumType.STRING)
     private Severity severity;
 
     @Enumerated(EnumType.STRING)
@@ -78,13 +74,12 @@ public class Issue {
     private Set<UserIssue> userIssues = new HashSet<>();
 
     // Seeding constructor (no id)
-    public Issue(String title, String description, IssueType type,
+    public Issue(String title, String description,
                  Severity severity, IssueStatus status, Instant updatedAt, Instant reportedAt,
                  Instant dueAt, Instant patchedAt, Instant verifiedAt,
                  String repository, String commitHash, Project project) {
         this.title = title;
         this.description = description;
-        this.type = type != null ? type : IssueType.OTHER;
         this.severity = severity;
         this.status = status;
         this.updatedAt = updatedAt;
